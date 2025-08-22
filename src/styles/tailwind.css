@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+  /* Design Tokens für Light/Dark Mode */
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  
+  /* Custom Brand Colors */
+  --color-brand-light: #dbeafe;
+  --color-brand-dark: #1e3a8a;
+}
+
+/* Methode 1: CSS Custom Properties (Empfohlen für globale Styles) */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+:root.dark {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --border-color: #374151;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Body Styling mit CSS Variables */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Methode 2: Direkte CSS Dark Mode Selektoren */
+.custom-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.custom-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Dark Mode Version */
+.dark .custom-button {
+  background-color: #1e40af;
+  box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.dark .custom-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Methode 3: Component-spezifische Styles */
+.card-custom {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+/* Text Variations */
+.text-muted {
+  color: var(--text-secondary);
+}
+
+/* Interactive Elements */
+.input-field {
+  background-color: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dark .input-field:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Debug Box bleibt für Tests */
+.dark-mode-test {
+  background-color: #ef4444;
+  color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.dark .dark-mode-test {
+  background-color: #10b981;
+}
