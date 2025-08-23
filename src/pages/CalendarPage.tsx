@@ -8,6 +8,9 @@ export default function CalendarPage() {
         <p className="mt-1 text-gray-600 dark:text-gray-400">
           Calendar implementation will be here
         </p>
+        <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">
+          🚀 GitHub Pages Deploy Test - CSS should be working!
+        </p>
       </div>
 
       {/* Placeholder for calendar implementation */}
