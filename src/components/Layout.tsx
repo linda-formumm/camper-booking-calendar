@@ -59,13 +59,6 @@ export default function Layout() {
                   <StationPicker />
                 </div>
 
-                {/* Helpful text when no station is selected */}
-                {!selectedStation && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                    Wähle eine Station aus, um fortzufahren
-                  </p>
-                )}
-
                 {/* Navigation links - only visible when station is selected */}
                 {selectedStation && (
                   <>
