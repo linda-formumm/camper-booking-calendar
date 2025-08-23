@@ -1,4 +1,4 @@
-import { MapPin, Calendar, BarChart3, Users, MapIcon } from 'lucide-react';
+import { MapIcon } from 'lucide-react';
 import { StationPicker } from '../components/StationPicker';
 import { useAppStore } from '../store/appStore';
 import { useEffect } from 'react';
@@ -91,7 +91,6 @@ export default function StartPage() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
