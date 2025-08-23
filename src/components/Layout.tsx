@@ -37,7 +37,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+      <header className="border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Logo & Navigation */}
@@ -50,13 +50,13 @@ export default function Layout() {
                 <span>Camper Booking</span>
               </Link>
 
-              <nav className="hidden md:flex items-center space-x-6">
+              <nav className="hidden items-center space-x-6 md:flex">
                 <Link
                   to="/"
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors ${
+                  className={`flex items-center space-x-1 rounded-lg px-3 py-2 transition-colors ${
                     location.pathname === "/"
-                      ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   }`}
                 >
                   <Calendar size={16} />
@@ -65,10 +65,10 @@ export default function Layout() {
 
                 <Link
                   to="/booking/example"
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors ${
+                  className={`flex items-center space-x-1 rounded-lg px-3 py-2 transition-colors ${
                     location.pathname.startsWith("/booking")
-                      ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-                      : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                      : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                   }`}
                 >
                   <MapPin size={16} />
@@ -80,7 +80,7 @@ export default function Layout() {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
+              className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             >
               {isDark ? <Sun size={16} /> : <Moon size={16} />}
               <span className="hidden sm:inline">
@@ -97,7 +97,7 @@ export default function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-8 mt-16">
+      <footer className="mt-16 border-t border-gray-200 bg-gray-50 py-8 dark:border-gray-700 dark:bg-gray-800">
         <div className="container mx-auto px-4 text-center text-gray-600 dark:text-gray-400">
           <p>
             &copy; 2025 Camper Booking Calendar - Built with React, TypeScript &

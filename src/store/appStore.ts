@@ -13,14 +13,14 @@ export interface AppState {
 // Zustand Store - Minimal Setup
 export const useAppStore = create<AppState>()(
   devtools(
-    (set) => ({
+    set => ({
       // Initial State
       isDarkMode: false,
 
       // Dark Mode Toggle
       toggleDarkMode: () =>
         set(
-          (state) => ({
+          state => ({
             isDarkMode: !state.isDarkMode,
           }),
           false,
@@ -34,8 +34,8 @@ export const useAppStore = create<AppState>()(
 );
 
 // Simple selector hooks
-export const useIsDarkMode = () => useAppStore((state) => state.isDarkMode);
+export const useIsDarkMode = () => useAppStore(state => state.isDarkMode);
 
 // Direct action hooks
 export const useToggleDarkMode = () =>
-  useAppStore((state) => state.toggleDarkMode);
+  useAppStore(state => state.toggleDarkMode);

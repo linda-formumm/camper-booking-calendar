@@ -1,11 +1,11 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Layout from './components/Layout'
-import CalendarPage from './pages/CalendarPage'
-import BookingDetailPage from './pages/BookingDetailPage'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./components/Layout";
+import CalendarPage from "./pages/CalendarPage";
+import BookingDetailPage from "./pages/BookingDetailPage";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Layout />,
     children: [
       {
@@ -13,13 +13,13 @@ const router = createBrowserRouter([
         element: <CalendarPage />,
       },
       {
-        path: '/booking/:id',
+        path: "/booking/:id",
         element: <BookingDetailPage />,
       },
     ],
   },
-])
+]);
 
 export default function AppRouter() {
-  return <RouterProvider router={router} />
+  return <RouterProvider router={router} />;
 }

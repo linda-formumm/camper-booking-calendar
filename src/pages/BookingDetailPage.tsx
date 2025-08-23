@@ -9,7 +9,7 @@ export default function BookingDetailPage() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate("/")}
-          className="px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+          className="rounded-lg bg-gray-100 px-3 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
         >
           ← Back to Calendar
         </button>
@@ -18,18 +18,18 @@ export default function BookingDetailPage() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Booking #{id}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
             Booking details will be displayed here
           </p>
         </div>
       </div>
 
       {/* Placeholder for booking details */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-12 text-center">
-        <p className="text-gray-600 dark:text-gray-400 text-lg">
+      <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+        <p className="text-lg text-gray-600 dark:text-gray-400">
           Booking detail component will be implemented here
         </p>
-        <p className="text-gray-500 dark:text-gray-500 text-sm mt-2">
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
           Booking ID: {id}
         </p>
       </div>
