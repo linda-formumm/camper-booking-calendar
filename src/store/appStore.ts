@@ -1,11 +1,10 @@
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
 
-// Date utilities
+// Simple date utilities
 const getWeekStart = (date: Date = new Date()): Date => {
   const d = new Date(date);
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday as week start
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   return new Date(d.setDate(diff));
 };
 
@@ -57,86 +56,79 @@ interface AppActions {
 
 type AppStore = AppState & AppActions;
 
-export const useAppStore = create<AppStore>()(
-  devtools(
-    (set, get) => ({
-      // Initial state
-      isDarkMode: false,
-      selectedStationId: null,
-      weekStart: getWeekStart(),
-      detailModalBookingId: null,
-      isLoading: false,
-      searchQuery: "",
+export const useAppStore = create<AppStore>((set, get) => ({
+  // Initial state
+  isDarkMode: false,
+  selectedStationId: null,
+  weekStart: getWeekStart(),
+  detailModalBookingId: null,
+  isLoading: false,
+  searchQuery: "",
 
-      // Theme actions
-      toggleDarkMode: () => set(state => ({ isDarkMode: !state.isDarkMode })),
-      setDarkMode: isDark => set({ isDarkMode: isDark }),
+  // Theme actions
+  toggleDarkMode: () => set(state => ({ isDarkMode: !state.isDarkMode })),
+  setDarkMode: isDark => set({ isDarkMode: isDark }),
 
-      // Calendar actions
-      setSelectedStation: stationId => set({ selectedStationId: stationId }),
+  // Calendar actions
+  setSelectedStation: stationId => set({ selectedStationId: stationId }),
 
-      setWeekStart: date => set({ weekStart: getWeekStart(date) }),
+  setWeekStart: date => set({ weekStart: getWeekStart(date) }),
 
-      goToPreviousWeek: () => {
-        const currentWeek = get().weekStart;
-        const previousWeek = new Date(currentWeek);
-        previousWeek.setDate(currentWeek.getDate() - 7);
-        set({ weekStart: previousWeek });
-      },
+  goToPreviousWeek: () => {
+    const currentWeek = get().weekStart;
+    const previousWeek = new Date(currentWeek);
+    previousWeek.setDate(currentWeek.getDate() - 7);
+    set({ weekStart: previousWeek });
+  },
 
-      goToNextWeek: () => {
-        const currentWeek = get().weekStart;
-        const nextWeek = new Date(currentWeek);
-        nextWeek.setDate(currentWeek.getDate() + 7);
-        set({ weekStart: nextWeek });
-      },
+  goToNextWeek: () => {
+    const currentWeek = get().weekStart;
+    const nextWeek = new Date(currentWeek);
+    nextWeek.setDate(currentWeek.getDate() + 7);
+    set({ weekStart: nextWeek });
+  },
 
-      goToCurrentWeek: () => set({ weekStart: getWeekStart() }),
+  goToCurrentWeek: () => set({ weekStart: getWeekStart() }),
 
-      // Modal actions
-      openBookingDetail: bookingId => set({ detailModalBookingId: bookingId }),
-      closeBookingDetail: () => set({ detailModalBookingId: null }),
+  // Modal actions
+  openBookingDetail: bookingId => set({ detailModalBookingId: bookingId }),
+  closeBookingDetail: () => set({ detailModalBookingId: null }),
 
-      // Search actions
-      setSearchQuery: query => set({ searchQuery: query }),
-      clearSearch: () => set({ searchQuery: "" }),
+  // Search actions
+  setSearchQuery: query => set({ searchQuery: query }),
+  clearSearch: () => set({ searchQuery: "" }),
 
-      // UI actions
-      setLoading: loading => set({ isLoading: loading }),
+  // UI actions
+  setLoading: loading => set({ isLoading: loading }),
 
-      // URL sync helpers
-      getStateForUrl: () => {
-        const { selectedStationId, weekStart } = get();
-        return {
-          station: selectedStationId || undefined,
-          week: formatDate(weekStart),
-        };
-      },
+  // URL sync helpers
+  getStateForUrl: () => {
+    const { selectedStationId, weekStart } = get();
+    return {
+      station: selectedStationId || undefined,
+      week: formatDate(weekStart),
+    };
+  },
 
-      setStateFromUrl: params => {
-        const updates: Partial<AppState> = {};
+  setStateFromUrl: params => {
+    const updates: Partial<AppState> = {};
 
-        if (params.station) {
-          updates.selectedStationId = params.station;
-        }
-
-        if (params.week) {
-          const date = new Date(params.week);
-          if (!isNaN(date.getTime())) {
-            updates.weekStart = getWeekStart(date);
-          }
-        }
-
-        set(updates);
-      },
-    }),
-    {
-      name: "app-store",
+    if (params.station) {
+      updates.selectedStationId = params.station;
     }
-  )
-);
 
-// Selector hooks for better performance
+    if (params.week) {
+      const date = new Date(params.week);
+      if (!isNaN(date.getTime())) {
+        updates.weekStart = getWeekStart(date);
+      }
+    }
+
+    set(updates);
+  },
+}));
+
+// Simple selector hooks
 export const useIsDarkMode = () => useAppStore(state => state.isDarkMode);
 export const useSelectedStationId = () =>
   useAppStore(state => state.selectedStationId);
