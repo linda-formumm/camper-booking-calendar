@@ -9,9 +9,12 @@ export default function Layout() {
   useEffect(() => {
     // Official Tailwind CSS best practice for dark mode detection
     const storedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
 
-    const shouldBeDark = storedTheme === "dark" || (!storedTheme && prefersDark);
+    const shouldBeDark =
+      storedTheme === "dark" || (!storedTheme && prefersDark);
     setIsDark(shouldBeDark);
 
     // Apply dark class to html element (Tailwind CSS official approach)
@@ -39,7 +42,10 @@ export default function Layout() {
           <div className="flex items-center justify-between">
             {/* Logo & Navigation */}
             <div className="flex items-center space-x-8">
-              <Link to="/" className="flex items-center space-x-2 text-xl font-bold text-blue-600 dark:text-blue-400">
+              <Link
+                to="/"
+                className="flex items-center space-x-2 text-xl font-bold text-blue-600 dark:text-blue-400"
+              >
                 <Calendar size={24} />
                 <span>Camper Booking</span>
               </Link>

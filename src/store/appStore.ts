@@ -1,13 +1,13 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
 // Minimal types for startup
 export interface AppState {
   // Only what we actually need right now
-  isDarkMode: boolean
-  
+  isDarkMode: boolean;
+
   // Actions
-  toggleDarkMode: () => void
+  toggleDarkMode: () => void;
 }
 
 // Zustand Store - Minimal Setup
@@ -18,19 +18,24 @@ export const useAppStore = create<AppState>()(
       isDarkMode: false,
 
       // Dark Mode Toggle
-      toggleDarkMode: () => 
-        set((state) => ({ 
-          isDarkMode: !state.isDarkMode 
-        }), false, 'toggleDarkMode'),
+      toggleDarkMode: () =>
+        set(
+          (state) => ({
+            isDarkMode: !state.isDarkMode,
+          }),
+          false,
+          "toggleDarkMode"
+        ),
     }),
     {
-      name: 'app-store',
+      name: "app-store",
     }
   )
-)
+);
 
 // Simple selector hooks
-export const useIsDarkMode = () => useAppStore(state => state.isDarkMode)
+export const useIsDarkMode = () => useAppStore((state) => state.isDarkMode);
 
-// Direct action hooks  
-export const useToggleDarkMode = () => useAppStore(state => state.toggleDarkMode)
+// Direct action hooks
+export const useToggleDarkMode = () =>
+  useAppStore((state) => state.toggleDarkMode);
