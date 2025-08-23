@@ -38,7 +38,7 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div className="container mx-auto px-4 py-4">
@@ -107,12 +107,12 @@ export default function Layout() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1">
         <Outlet />
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 border-t border-gray-200 bg-gray-50 py-8 dark:border-gray-700 dark:bg-gray-800">
+      <footer className="mt-auto border-t border-gray-200 bg-gray-50 py-8 dark:border-gray-700 dark:bg-gray-800">
         <div className="container mx-auto px-4 text-center text-gray-600 dark:text-gray-400">
           <p>
             &copy; 2025 Camper Booking Calendar - Built with React, TypeScript &
