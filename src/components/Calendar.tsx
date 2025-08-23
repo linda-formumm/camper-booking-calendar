@@ -13,7 +13,6 @@ interface CalendarProps {
 
 export default function Calendar({ className }: CalendarProps) {
   const [currentWeek, setCurrentWeek] = useState(() => getWeekStart(new Date()));
-  const [isLoading, setIsLoading] = useState(false);
   const { selectedStation } = useAppStore();
 
   const weekDays = getWeekDays(currentWeek);
@@ -33,25 +32,19 @@ export default function Calendar({ className }: CalendarProps) {
 
   // Navigation functions
   const goToPreviousWeek = () => {
-    setIsLoading(true);
     const prevWeek = new Date(currentWeek);
     prevWeek.setDate(currentWeek.getDate() - 7);
     setCurrentWeek(getWeekStart(prevWeek));
-    setTimeout(() => setIsLoading(false), 300);
   };
 
   const goToNextWeek = () => {
-    setIsLoading(true);
     const nextWeek = new Date(currentWeek);
     nextWeek.setDate(currentWeek.getDate() + 7);
     setCurrentWeek(getWeekStart(nextWeek));
-    setTimeout(() => setIsLoading(false), 300);
   };
 
   const goToToday = () => {
-    setIsLoading(true);
     setCurrentWeek(getWeekStart(new Date()));
-    setTimeout(() => setIsLoading(false), 300);
   };
 
   // Keyboard navigation
@@ -79,7 +72,7 @@ export default function Calendar({ className }: CalendarProps) {
         <div className="flex items-center space-x-4">
           <button
             onClick={goToPreviousWeek}
-            disabled={isLoading}
+            disabled={bookingsLoading}
             className="p-2 rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
             aria-label="Previous week"
           >
@@ -97,7 +90,7 @@ export default function Calendar({ className }: CalendarProps) {
           
           <button
             onClick={goToNextWeek}
-            disabled={isLoading}
+            disabled={bookingsLoading}
             className="p-2 rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
             aria-label="Next week"
           >
@@ -108,7 +101,7 @@ export default function Calendar({ className }: CalendarProps) {
         <div className="flex-1 flex justify-end">
           <button
             onClick={goToToday}
-            disabled={isLoading}
+            disabled={bookingsLoading}
             className="px-3 py-2 text-sm rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white transition-colors"
           >
             Today
@@ -153,11 +146,11 @@ export default function Calendar({ className }: CalendarProps) {
               <div
                 key={`content-${index}`}
                 className={cn(
-                  "bg-stone-50 dark:bg-gray-900 p-4 min-h-32 border-t-2 border-stone-300 dark:border-gray-800 hover:bg-stone-100 dark:hover:bg-gray-800 transition-colors cursor-pointer",
-                  (isLoading || bookingsLoading) && "animate-pulse"
+                  "bg-stone-50 dark:bg-gray-900 p-4 min-h-32 border-t-2 border-stone-300 dark:border-gray-800",
+                  bookingsLoading && "animate-pulse"
                 )}
               >
-                {(isLoading || bookingsLoading) ? (
+                {bookingsLoading ? (
                   <div className="space-y-2">
                     <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-3/4"></div>
                     <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-1/2"></div>
@@ -219,7 +212,7 @@ export default function Calendar({ className }: CalendarProps) {
               </div>
               
               <div className="px-4 pb-4">
-                {(isLoading || bookingsLoading) ? (
+                {bookingsLoading ? (
                   <div className="space-y-2">
                     <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-3/4"></div>
                     <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-1/2"></div>
