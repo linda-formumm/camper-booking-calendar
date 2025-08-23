@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Moon, Sun, Calendar, MapPin } from "lucide-react";
+import { StationPicker } from "./StationPicker";
 
 export default function Layout() {
   const location = useLocation();
@@ -77,16 +78,22 @@ export default function Layout() {
               </nav>
             </div>
 
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-            >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
-              <span className="hidden sm:inline">
-                {isDark ? "Light" : "Dark"}
-              </span>
-            </button>
+            {/* Station Search & Theme Toggle */}
+            <div className="flex items-center space-x-4">
+              <div className="w-64">
+                <StationPicker />
+              </div>
+
+              <button
+                onClick={toggleTheme}
+                className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+              >
+                {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                <span className="hidden sm:inline">
+                  {isDark ? "Light" : "Dark"}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </header>

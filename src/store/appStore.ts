@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { Station } from "../lib/types";
 
 // Simple date utilities
 const getWeekStart = (date: Date = new Date()): Date => {
@@ -18,6 +19,7 @@ interface AppState {
 
   // Calendar & Booking State
   selectedStationId: string | null;
+  selectedStation: Station | null;
   weekStart: Date;
   detailModalBookingId: string | null;
 
@@ -32,7 +34,8 @@ interface AppActions {
   setDarkMode: (isDark: boolean) => void;
 
   // Calendar actions
-  setSelectedStation: (stationId: string | null) => void;
+  setSelectedStation: (station: Station | null) => void;
+  setSelectedStationId: (stationId: string | null) => void;
   setWeekStart: (date: Date) => void;
   goToPreviousWeek: () => void;
   goToNextWeek: () => void;
@@ -60,6 +63,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   // Initial state
   isDarkMode: false,
   selectedStationId: null,
+  selectedStation: null,
   weekStart: getWeekStart(),
   detailModalBookingId: null,
   isLoading: false,
@@ -70,7 +74,12 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setDarkMode: isDark => set({ isDarkMode: isDark }),
 
   // Calendar actions
-  setSelectedStation: stationId => set({ selectedStationId: stationId }),
+  setSelectedStation: station =>
+    set({
+      selectedStation: station,
+      selectedStationId: station?.id || null,
+    }),
+  setSelectedStationId: stationId => set({ selectedStationId: stationId }),
 
   setWeekStart: date => set({ weekStart: getWeekStart(date) }),
 
