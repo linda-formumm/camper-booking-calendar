@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { KeyRound, CircleCheck, MoreHorizontal } from 'lucide-react';
+import { calculateBookingDuration } from '../lib/date-utils';
 import type { Booking } from '../lib/types';
 
 interface BookingPillProps {
@@ -11,11 +12,7 @@ interface BookingPillProps {
 // Simple pill component for individual bookings
 function BookingPill({ booking, type, onClick }: BookingPillProps) {
   const isPickup = type === 'pickup';
-  
-  // Calculate booking duration in days
-  const startDate = new Date(booking.startDate);
-  const endDate = new Date(booking.endDate);
-  const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  const duration = calculateBookingDuration(booking.startDate, booking.endDate);
   
   return (
     <button
