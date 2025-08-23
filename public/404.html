@@ -5,16 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Camper Booking Calendar</title>
     
-    <!-- GitHub Pages SPA fallback -->
+    <!-- GitHub Pages SPA fallback for React Router v7 -->
     <script>
       // Single Page Apps for GitHub Pages
       // MIT License
       // https://github.com/rafgraph/spa-github-pages
       // This script takes the current url and converts the path and query
       // string into just a query string, and then redirects the browser
-      // to the new url with only a query string and hash fragment,
-      // e.g. https://www.foo.tld/one/two?a=b&c=d#qwe, becomes
-      // https://www.foo.tld/?/one/two&a=b~and~c=d#qwe
+      // to the new url with only a query string and hash fragment
       var pathSegmentsToKeep = 1;
 
       var l = window.location;
@@ -28,6 +26,8 @@
     </script>
   </head>
   <body>
-    <div id="loading">Loading...</div>
+    <div id="loading" style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui;">
+      <div>Loading Camper Booking Calendar...</div>
+    </div>
   </body>
 </html>

@@ -3,22 +3,52 @@ import Layout from "./components/Layout";
 import CalendarPage from "./pages/CalendarPage";
 import BookingDetailPage from "./pages/BookingDetailPage";
 
-const router = createBrowserRouter([
+// Get basename for GitHub Pages deployment
+const getBasename = () => {
+  if (
+    import.meta.env.PROD &&
+    window.location.hostname === "linda-formumm.github.io"
+  ) {
+    return "/camper-booking-calendar";
+  }
+  return "/";
+};
+
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <Layout />,
+      errorElement: (
+        <div className="p-8 text-center">
+          <h1 className="mb-4 text-2xl font-bold text-red-600">
+            Oops! Something went wrong
+          </h1>
+          <p className="text-gray-600">
+            Please try refreshing the page or go back to the{" "}
+            <a href="/" className="text-blue-600 hover:underline">
+              homepage
+            </a>
+            .
+          </p>
+        </div>
+      ),
+      children: [
+        {
+          index: true,
+          element: <CalendarPage />,
+        },
+        {
+          path: "/booking/:id",
+          element: <BookingDetailPage />,
+        },
+      ],
+    },
+  ],
   {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        index: true,
-        element: <CalendarPage />,
-      },
-      {
-        path: "/booking/:id",
-        element: <BookingDetailPage />,
-      },
-    ],
-  },
-]);
+    basename: getBasename(),
+  }
+);
 
 export default function AppRouter() {
   return <RouterProvider router={router} />;
