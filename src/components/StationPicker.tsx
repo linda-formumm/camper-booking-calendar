@@ -3,17 +3,18 @@ import { Search, MapPin, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { stationsApi } from '../lib/api';
+import { stationsApi, bookingsApi } from '../lib/api';
 import { useAppStore } from '../store/appStore';
 import type { Station } from '../lib/types';
 
-export function StationPicker() {
+export function StationPicker({ autoFocus = false }: { autoFocus?: boolean }) {
   const [inputValue, setInputValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [stations, setStations] = useState<Station[]>([]);
   const [filteredStations, setFilteredStations] = useState<Station[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [isFocused, setIsFocused] = useState(false);
   const { selectedStation, setSelectedStation } = useAppStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -33,6 +34,17 @@ export function StationPicker() {
 
     loadStations();
   }, []);
+
+  // Auto focus when autoFocus prop is true
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      // Small delay to ensure component is fully mounted
+      setTimeout(() => {
+        inputRef.current?.focus();
+        setIsFocused(true);
+      }, 100);
+    }
+  }, [autoFocus]);
 
   // Filter stations based on input
   useEffect(() => {
@@ -65,12 +77,20 @@ export function StationPicker() {
     }
   };
 
-  const handleStationSelect = (station: Station) => {
+  const handleStationSelect = async (station: Station) => {
     setSelectedStation(station);
     setInputValue(station.name);
     setIsOpen(false);
     setHighlightedIndex(-1);
     inputRef.current?.blur();
+
+    // Log all bookings for this station
+    try {
+      const bookings = await bookingsApi.getBookings({ stationId: station.id });
+      console.log(`Bookings for station "${station.name}":`, bookings);
+    } catch (error) {
+      console.error('Failed to load bookings for station:', error);
+    }
   };
 
   const handleClear = () => {
@@ -115,20 +135,28 @@ export function StationPicker() {
   return (
     <div className="relative w-full">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 dark:text-white z-10" />
         <Input
           ref={inputRef}
           type="text"
-          placeholder="Station eingeben..."
+          placeholder="Enter station..."
           value={inputValue}
           onChange={(e) => handleInputChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => {
+            setIsFocused(true);
             if (filteredStations.length > 0) {
               setIsOpen(true);
             }
           }}
-          className="pl-10 pr-10"
+          onBlur={() => {
+            setIsFocused(false);
+          }}
+          className={cn(
+            "pl-10 pr-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500 transition-all duration-200",
+            "dark:bg-gray-800/80 dark:border-gray-500/50 dark:text-white dark:placeholder-white/80 dark:backdrop-blur-sm",
+            (isFocused || autoFocus) && "shadow-lg shadow-blue-500/25 border-blue-300 dark:shadow-blue-400/30 dark:border-blue-400/50"
+          )}
           disabled={isLoading}
         />
         {(inputValue || selectedStation) && (
@@ -136,16 +164,16 @@ export function StationPicker() {
             variant="ghost"
             size="sm"
             onClick={handleClear}
-            className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0 hover:bg-transparent"
+            className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0 hover:bg-transparent dark:hover:bg-gray-700"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3 dark:text-gray-400" />
           </Button>
         )}
       </div>
 
       {/* Suggestions Dropdown */}
       {isOpen && filteredStations.length > 0 && (
-        <div className="absolute top-full z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
+  <div className="absolute top-full z-50 mt-1 w-full rounded-md border-2 border-gray-300 bg-white shadow-xl dark:border-gray-600 dark:bg-gray-800 dark:shadow-2xl">
           <ul ref={listRef} className="max-h-60 overflow-y-auto p-1">
             {filteredStations.map((station, index) => (
               <li key={station.id}>
@@ -154,13 +182,14 @@ export function StationPicker() {
                   onClick={() => handleStationSelect(station)}
                   className={cn(
                     "flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm text-left transition-colors",
-                    "hover:bg-accent hover:text-accent-foreground",
-                    "focus:bg-accent focus:text-accent-foreground focus:outline-none",
-                    index === highlightedIndex && "bg-accent text-accent-foreground"
+                    "hover:bg-gray-100 hover:text-gray-900",
+                    "focus:bg-gray-100 focus:text-gray-900 focus:outline-none",
+                    "dark:hover:bg-blue-600 dark:focus:bg-blue-600 dark:hover:text-white dark:focus:text-white",
+                    index === highlightedIndex && "bg-gray-100 text-gray-900 dark:bg-blue-600 dark:text-white"
                   )}
                 >
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  {station.name}
+                  <MapPin className="h-4 w-4 text-gray-400 dark:text-gray-300 flex-shrink-0" />
+                  <span className="text-gray-900 dark:text-gray-100">{station.name}</span>
                 </button>
               </li>
             ))}
@@ -170,8 +199,8 @@ export function StationPicker() {
 
       {/* No results */}
       {isOpen && inputValue.trim() && filteredStations.length === 0 && (
-        <div className="absolute top-full z-50 mt-1 w-full rounded-md border bg-popover p-3 shadow-md">
-          <p className="text-sm text-muted-foreground">
+        <div className="absolute top-full z-50 mt-1 w-full rounded-md border-2 border-border bg-popover p-3 shadow-xl dark:border-gray-600 dark:bg-gray-800 dark:shadow-2xl">
+          <p className="text-sm text-muted-foreground dark:text-gray-300">
             Keine Station gefunden für "{inputValue}"
           </p>
         </div>
