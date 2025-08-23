@@ -1,19 +1,7 @@
 import { MapIcon } from 'lucide-react';
 import { StationPicker } from '../components/StationPicker';
-import { useAppStore } from '../store/appStore';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export default function StartPage() {
-  const { selectedStation } = useAppStore();
-  const navigate = useNavigate();
-
-  // Redirect to calendar when station is selected
-  useEffect(() => {
-    if (selectedStation) {
-      navigate('/calendar');
-    }
-  }, [selectedStation, navigate]);
 
   return (
     <main className="relative min-h-[calc(80vh-200px)]">

@@ -10,13 +10,43 @@ export default function CalendarPage() {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           {selectedStation ? `${selectedStation.name} Booking Calendar` : 'Booking Calendar'}
         </h1>
-        <p className="mt-1 text-gray-600 dark:text-gray-400">
-          {selectedStation ? `Manage bookings for ${selectedStation.name} station` : 'Select a station to use the calendar'}
-        </p>
+        {selectedStation && (
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
+            Manage bookings for {selectedStation.name} station
+          </p>
+        )}
       </header>
 
       {/* Calendar Component */}
-      <Calendar />
+      {selectedStation ? (
+        <Calendar />
+      ) : (
+        <div className="text-center py-12">
+          <div className="max-w-md mx-auto">
+            <div className="mb-4">
+              <svg 
+                className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={1} 
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              Select a Station
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              To use the booking calendar, please first select a station from the dropdown menu above.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -21,14 +21,21 @@ async function apiFetch<T>(
 export const stationsApi = {
   getStations: async (query?: string): Promise<Station[]> => {
     const stations = await apiFetch<Station[]>("/stations");
+    
+    // Filter out invalid station names (mock API artifacts)
+    const validStations = stations.filter(station => 
+      station.name && 
+      !station.name.includes('{{') && 
+      !station.name.includes('}}')
+    );
 
     if (query) {
-      return stations.filter(station =>
+      return validStations.filter(station =>
         station.name.toLowerCase().includes(query.toLowerCase())
       );
     }
 
-    return stations;
+    return validStations;
   },
 
   getStation: async (id: string): Promise<Station> => {
