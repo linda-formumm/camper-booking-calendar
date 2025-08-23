@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { getWeekStart, getWeekDays, getISOWeek, isToday, formatDayHeader, formatMonthYear } from '../lib/date-utils';
+import { useWeeklyBookings } from '../hooks/use-weekly-bookings';
+import { useAppStore } from '../store/appStore';
+import { BookingList } from './BookingList';
 import { cn } from '../lib/utils';
+import type { Booking } from '../lib/types';
 
 interface CalendarProps {
   className?: string;
@@ -10,9 +14,22 @@ interface CalendarProps {
 export default function Calendar({ className }: CalendarProps) {
   const [currentWeek, setCurrentWeek] = useState(() => getWeekStart(new Date()));
   const [isLoading, setIsLoading] = useState(false);
+  const { selectedStation } = useAppStore();
 
   const weekDays = getWeekDays(currentWeek);
   const weekNumber = getISOWeek(currentWeek);
+
+  // Fetch booking data for this week
+  const { weeklyData, isLoading: bookingsLoading } = useWeeklyBookings(
+    selectedStation?.id || null, 
+    weekDays
+  );
+
+  // Handle booking click - for now just log it
+  const handleBookingClick = (booking: Booking) => {
+    console.log('Booking clicked:', booking);
+    // TODO: Open booking detail modal/page
+  };
 
   // Navigation functions
   const goToPreviousWeek = () => {
@@ -128,79 +145,101 @@ export default function Calendar({ className }: CalendarProps) {
           ))}
           
           {/* Day Content Areas */}
-          {weekDays.map((day, index) => (
-            <div
-              key={`content-${index}`}
-              className={cn(
-                "bg-stone-50 dark:bg-gray-900 p-4 min-h-32 border-t-2 border-stone-300 dark:border-gray-800 hover:bg-stone-100 dark:hover:bg-gray-800 transition-colors cursor-pointer",
-                isLoading && "animate-pulse"
-              )}
-            >
-              {isLoading ? (
-                <div className="space-y-2">
-                  <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-3/4"></div>
-                  <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-1/2"></div>
-                </div>
-              ) : (
-                <div className="text-sm text-stone-600 dark:text-gray-400">
-                  {/* Placeholder for bookings */}
-                  Available
-                </div>
-              )}
-            </div>
-          ))}
+          {weekDays.map((day, index) => {
+            const dayString = day.toISOString().split('T')[0];
+            const dayData = weeklyData.find(d => d.date === dayString);
+            
+            return (
+              <div
+                key={`content-${index}`}
+                className={cn(
+                  "bg-stone-50 dark:bg-gray-900 p-4 min-h-32 border-t-2 border-stone-300 dark:border-gray-800 hover:bg-stone-100 dark:hover:bg-gray-800 transition-colors cursor-pointer",
+                  (isLoading || bookingsLoading) && "animate-pulse"
+                )}
+              >
+                {(isLoading || bookingsLoading) ? (
+                  <div className="space-y-2">
+                    <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-3/4"></div>
+                    <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-1/2"></div>
+                  </div>
+                ) : dayData ? (
+                  <BookingList
+                    pickups={dayData.pickups}
+                    returns={dayData.returns}
+                    onBookingClick={handleBookingClick}
+                    maxVisible={3}
+                  />
+                ) : (
+                  <div className="text-sm text-stone-600 dark:text-gray-400">
+                    Available
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
-        {weekDays.map((day, index) => (
-          <div
-            key={`mobile-${index}`}
-            className={cn(
-              "bg-stone-50 dark:bg-gray-900 rounded-lg border shadow-sm hover:shadow-md transition-all cursor-pointer",
-              isToday(day) 
-                ? "border-blue-300 ring-2 ring-blue-200 dark:border-blue-500 dark:ring-blue-400" 
-                : "border-stone-200 hover:border-stone-300 dark:border-gray-700"
-            )}
-          >
-            <div className="flex items-center justify-between mb-3 p-4">
-              <div className="flex items-center space-x-3">
-                <div className="text-xs text-stone-500 dark:text-gray-400 uppercase tracking-wide">
-                  {formatDayHeader(day)}
+        {weekDays.map((day, index) => {
+          const dayString = day.toISOString().split('T')[0];
+          const dayData = weeklyData.find(d => d.date === dayString);
+          
+          return (
+            <div
+              key={`mobile-${index}`}
+              className={cn(
+                "bg-stone-50 dark:bg-gray-900 rounded-lg border shadow-sm hover:shadow-md transition-all cursor-pointer",
+                isToday(day) 
+                  ? "border-blue-300 ring-2 ring-blue-200 dark:border-blue-500 dark:ring-blue-400" 
+                  : "border-stone-200 hover:border-stone-300 dark:border-gray-700"
+              )}
+            >
+              <div className="flex items-center justify-between mb-3 p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="text-xs text-stone-500 dark:text-gray-400 uppercase tracking-wide">
+                    {formatDayHeader(day)}
+                  </div>
+                  <div className={cn(
+                    "text-base",
+                    isToday(day) 
+                      ? "text-blue-600 dark:text-blue-400" 
+                      : "text-gray-800 dark:text-white"
+                  )}>
+                    {day.getDate()}
+                  </div>
+                  {isToday(day) && (
+                    <span className="text-xs text-blue-600 dark:text-blue-400">
+                      Today
+                    </span>
+                  )}
                 </div>
-                <div className={cn(
-                  "text-base",
-                  isToday(day) 
-                    ? "text-blue-600 dark:text-blue-400" 
-                    : "text-gray-800 dark:text-white"
-                )}>
-                  {day.getDate()}
-                </div>
-                {isToday(day) && (
-                  <span className="text-xs text-blue-600 dark:text-blue-400">
-                    Today
-                  </span>
+                <CalendarIcon className="h-4 w-4 text-stone-400 dark:text-gray-400" />
+              </div>
+              
+              <div className="px-4 pb-4">
+                {(isLoading || bookingsLoading) ? (
+                  <div className="space-y-2">
+                    <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-3/4"></div>
+                    <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-1/2"></div>
+                  </div>
+                ) : dayData ? (
+                  <BookingList
+                    pickups={dayData.pickups}
+                    returns={dayData.returns}
+                    onBookingClick={handleBookingClick}
+                    maxVisible={4} // Show a bit more on mobile
+                  />
+                ) : (
+                  <div className="text-sm text-stone-600 dark:text-gray-400">
+                    Available
+                  </div>
                 )}
               </div>
-              <CalendarIcon className="h-4 w-4 text-stone-400 dark:text-gray-400" />
             </div>
-            
-            <div className="px-4 pb-4">
-              {isLoading ? (
-                <div className="space-y-2">
-                  <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-3/4"></div>
-                  <div className="h-4 bg-stone-200 dark:bg-gray-700 rounded w-1/2"></div>
-                </div>
-              ) : (
-                <div className="text-sm text-stone-600 dark:text-gray-400">
-                  {/* Placeholder for bookings */}
-                  Available
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Keyboard Navigation Hint */}

@@ -28,3 +28,18 @@ export interface BookingsQuery {
   from?: string;
   to?: string;
 }
+
+// New types for calendar integration
+export interface DayBookings {
+  date: string;
+  pickups: Booking[];  // Bookings starting today
+  returns: Booking[];  // Bookings ending today
+  activeBookings?: Booking[];  // All bookings active on this day
+}
+
+export interface CalendarData {
+  weekStart: string;
+  weekEnd: string;
+  stationId: string;
+  days: DayBookings[];
+}
