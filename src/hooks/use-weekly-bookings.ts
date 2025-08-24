@@ -2,14 +2,19 @@ import { useQuery } from '@tanstack/react-query';
 import { bookingsApi } from '../lib/api';
 import type { DayBookings, Booking } from '../lib/types';
 
-// Helper function to format date as YYYY-MM-DD
+// Helper function to format date as YYYY-MM-DD (local time, no timezone)
 function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0];
+  return date.getFullYear() + '-' + 
+    String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+    String(date.getDate()).padStart(2, '0');
 }
 
 // Helper function to check if two dates are the same day
 function isSameDay(date1: string, date2: string): boolean {
-  return date1 === date2;
+  // Extract just the date part (YYYY-MM-DD) from both dates
+  const dateOnly1 = date1.split('T')[0];
+  const dateOnly2 = date2.split('T')[0];
+  return dateOnly1 === dateOnly2;
 }
 
 // Simple function to organize bookings by day

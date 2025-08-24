@@ -53,15 +53,23 @@ export const bookingsApi = {
 
       if (from || to) {
         bookings = bookings.filter((booking: Booking) => {
+          // Parse booking dates as UTC to match the ISO format from API
           const startDate = new Date(booking.startDate);
           const endDate = new Date(booking.endDate);
+          
+          // Parse filter dates and set to start/end of day to be inclusive
+          const fromDate = from ? new Date(from + 'T00:00:00.000Z') : null;
+          const toDate = to ? new Date(to + 'T23:59:59.999Z') : null;
 
-          if (from && endDate < new Date(from)) {
+          // Check if booking overlaps with the week range
+          if (fromDate && endDate < fromDate) {
             return false;
           }
-          if (to && startDate > new Date(to)) {
+          
+          if (toDate && startDate > toDate) {
             return false;
           }
+          
           return true;
         });
       }

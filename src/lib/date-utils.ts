@@ -8,14 +8,20 @@
 export function getWeekStart(date: Date): Date {
   const start = new Date(date);
   const day = start.getDay();
-  const diff = day === 0 ? -6 : 1 - day; // Monday is start of week
-  start.setDate(start.getDate() + diff);
+  
+  // Calculate days to subtract to get to Monday
+  // Sunday = 0, Monday = 1, ..., Saturday = 6
+  // For Monday (1): 1 - 1 = 0 (no change)
+  // For Sunday (0): 0 - 1 = -1, but we want -6, so handle Sunday specially
+  const daysToSubtract = day === 0 ? 6 : day - 1;
+  
+  start.setDate(start.getDate() - daysToSubtract);
   start.setHours(0, 0, 0, 0);
   return start;
 }
 
 /**
- * Get an array of 7 days starting from the week start
+ * Get an array of 7 days starting from Monday
  */
 export function getWeekDays(weekStart: Date): Date[] {
   const days: Date[] = [];

@@ -68,7 +68,7 @@ export function BookingList({ pickups, returns, onBookingClick, maxVisible = 3 }
   const hasMore = totalCount > maxVisible;
   
   return (
-    <div className="space-y-0">
+    <div className="space-y-2">
       {/* Show pickup bookings first */}
       {visibleBookings
         .filter(booking => pickups.includes(booking))

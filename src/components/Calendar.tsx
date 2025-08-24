@@ -25,8 +25,7 @@ export default function Calendar({ className }: CalendarProps) {
   );
 
   // Handle booking click - for now just log it
-  const handleBookingClick = (booking: Booking) => {
-    console.log('Booking clicked:', booking);
+  const handleBookingClick = (_booking: Booking) => {
     // TODO: Open booking detail modal/page
   };
 
@@ -43,8 +42,8 @@ export default function Calendar({ className }: CalendarProps) {
     setCurrentWeek(getWeekStart(nextWeek));
   };
 
-  const goToToday = () => {
-    setCurrentWeek(getWeekStart(new Date()));
+  const goToDate = (selectedDate: Date) => {
+    setCurrentWeek(getWeekStart(selectedDate));
   };
 
   // Keyboard navigation
@@ -70,6 +69,7 @@ export default function Calendar({ className }: CalendarProps) {
         <div className="flex-1"></div>
         
         <div className="flex items-center space-x-4">
+          {/* Week navigation */}
           <button
             onClick={goToPreviousWeek}
             disabled={bookingsLoading}
@@ -99,13 +99,21 @@ export default function Calendar({ className }: CalendarProps) {
         </div>
         
         <div className="flex-1 flex justify-end">
-          <button
-            onClick={goToToday}
+          {/* Date picker for quick navigation */}
+          <input
+            type="date"
+            lang="en"
+            value={`${currentWeek.getFullYear()}-${String(currentWeek.getMonth() + 1).padStart(2, '0')}-${String(currentWeek.getDate()).padStart(2, '0')}`}
+            onChange={(e) => {
+              const selectedDate = new Date(e.target.value);
+              if (!isNaN(selectedDate.getTime())) {
+                goToDate(selectedDate);
+              }
+            }}
             disabled={bookingsLoading}
             className="px-3 py-2 text-sm rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white transition-colors"
-          >
-            Today
-          </button>
+            title="Select date"
+          />
         </div>
       </div>
 
@@ -139,7 +147,10 @@ export default function Calendar({ className }: CalendarProps) {
           
           {/* Day Content Areas */}
           {weekDays.map((day, index) => {
-            const dayString = day.toISOString().split('T')[0];
+            // Use local date formatting to avoid timezone issues
+            const dayString = day.getFullYear() + '-' + 
+              String(day.getMonth() + 1).padStart(2, '0') + '-' + 
+              String(day.getDate()).padStart(2, '0');
             const dayData = weeklyData.find(d => d.date === dayString);
             
             return (
