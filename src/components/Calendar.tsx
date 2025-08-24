@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getWeekStart, getWeekDays, getISOWeek, isToday, formatDayHeader, formatMonthYear } from '../lib/date-utils';
 import { useWeeklyBookings } from '../hooks/use-weekly-bookings';
 import { useAppStore } from '../store/appStore';
@@ -12,8 +13,15 @@ interface CalendarProps {
 }
 
 export default function Calendar({ className }: CalendarProps) {
-  const [currentWeek, setCurrentWeek] = useState(() => getWeekStart(new Date()));
+  const [searchParams] = useSearchParams();
+  const dateParam = searchParams.get('date');
+  
+  // Initialize with date from URL parameter if available, otherwise use today
+  const initialDate = dateParam ? new Date(dateParam) : new Date();
+  const [currentWeek, setCurrentWeek] = useState(() => getWeekStart(initialDate));
+  
   const { selectedStation } = useAppStore();
+  const navigate = useNavigate();
 
   const weekDays = getWeekDays(currentWeek);
   const weekNumber = getISOWeek(currentWeek);
@@ -24,10 +32,22 @@ export default function Calendar({ className }: CalendarProps) {
     weekDays
   );
 
-  // Handle booking click - for now just log it
-  const handleBookingClick = (_booking: Booking) => {
-    // TODO: Open booking detail modal/page
+  // Handle booking click - navigate to detail page
+  const handleBookingClick = (booking: Booking) => {
+    if (selectedStation?.id) {
+      navigate(`/booking/${selectedStation.id}/${booking.id}`);
+    }
   };
+
+  // Update current week when date parameter changes
+  useEffect(() => {
+    if (dateParam) {
+      const paramDate = new Date(dateParam);
+      if (!isNaN(paramDate.getTime())) {
+        setCurrentWeek(getWeekStart(paramDate));
+      }
+    }
+  }, [dateParam]);
 
   // Navigation functions
   const goToPreviousWeek = () => {

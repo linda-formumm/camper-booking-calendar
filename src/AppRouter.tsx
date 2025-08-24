@@ -44,7 +44,7 @@ const router = createBrowserRouter(
           element: <CalendarPage />,
         },
         {
-          path: "/booking/:id",
+          path: "/booking/:stationId/:bookingId",
           element: <BookingDetailPage />,
         },
       ],

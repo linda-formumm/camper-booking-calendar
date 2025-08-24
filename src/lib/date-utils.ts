@@ -93,3 +93,26 @@ export function formatMonthYear(date: Date): string {
     year: 'numeric'
   }).format(date);
 }
+
+/**
+ * Format date for display in booking details
+ */
+export function formatDateForDisplay(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(date);
+}
+
+/**
+ * Format day name for booking details
+ */
+export function formatDateForDayName(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'long'
+  }).format(date);
+}

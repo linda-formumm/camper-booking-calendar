@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Moon, Sun, Calendar, MapPin } from "lucide-react";
+import { Moon, Sun, Calendar } from "lucide-react";
 import { StationPicker } from "./StationPicker";
 import { useAppStore } from "../store/appStore";
 
@@ -72,18 +72,6 @@ export default function Layout() {
                     >
                       <Calendar size={16} />
                       <span>Calendar</span>
-                    </Link>
-
-                    <Link
-                      to="/booking/example"
-                      className={`flex items-center space-x-1 rounded-lg px-3 py-2 transition-colors ${
-                        location.pathname.startsWith("/booking")
-                          ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-                          : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                      }`}
-                    >
-                      <MapPin size={16} />
-                      <span>Sample Detail</span>
                     </Link>
                   </>
                 )}
