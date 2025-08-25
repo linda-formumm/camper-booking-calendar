@@ -56,12 +56,12 @@ export function isToday(date: Date): boolean {
 }
 
 /**
- * Calculate booking duration in days (inclusive)
+ * Calculate the duration of a booking in days
  */
 export function calculateBookingDuration(startDate: string, endDate: string): number {
   const start = new Date(startDate);
   const end = new Date(endDate);
-  return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 /**
@@ -115,4 +115,15 @@ export function formatDateForDayName(dateString: string): string {
   return new Intl.DateTimeFormat('en-US', {
     weekday: 'long'
   }).format(date);
+}
+
+/**
+ * Validate that return date is at least one day after pickup date
+ */
+export function isValidBookingDateRange(pickupDate: string, returnDate: string): boolean {
+  const pickupDateTime = new Date(pickupDate).getTime();
+  const returnDateTime = new Date(returnDate).getTime();
+  const oneDayInMs = 24 * 60 * 60 * 1000;
+  
+  return returnDateTime >= pickupDateTime + oneDayInMs;
 }

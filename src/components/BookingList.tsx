@@ -7,10 +7,13 @@ interface BookingPillProps {
   booking: Booking;
   type: 'pickup' | 'return';
   onClick: (booking: Booking) => void;
+  isDragging?: boolean;
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
 }
 
 // Simple pill component for individual bookings
-function BookingPill({ booking, type, onClick }: BookingPillProps) {
+function BookingPill({ booking, type, onClick, isDragging, onDragStart, onDragEnd }: BookingPillProps) {
   const isPickup = type === 'pickup';
   const duration = calculateBookingDuration(booking.startDate, booking.endDate);
   
@@ -18,9 +21,23 @@ function BookingPill({ booking, type, onClick }: BookingPillProps) {
     <button
       title={isPickup ? 'Pickup' : 'Return'}
       onClick={() => onClick(booking)}
+      draggable
+      onDragStart={(e) => {
+        onDragStart?.();
+        e.dataTransfer.setData('text/plain', JSON.stringify({
+          bookingId: booking.id,
+          type: type,
+          customerName: booking.customerName,
+          originalBooking: booking
+        }));
+      }}
+      onDragEnd={() => {
+        onDragEnd?.();
+      }}
       className={`
         w-full flex items-center gap-2 px-3 py-2 text-sm font-medium
-        transition-colors cursor-pointer border-l-4
+        transition-all duration-200 cursor-grab active:cursor-grabbing border-l-4
+        ${isDragging ? 'opacity-50 scale-105 z-10' : ''}
         ${isPickup 
           ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 border-green-500 rounded-r-lg' 
           : 'bg-orange-100 text-orange-700 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/50 border-orange-500 rounded-r-lg'
@@ -54,6 +71,7 @@ interface BookingListProps {
 // Component to show list of bookings for a day  
 export function BookingList({ pickups, returns, onBookingClick, maxVisible = 3 }: BookingListProps) {
   const [showAll, setShowAll] = useState(false);
+  const [draggingItem, setDraggingItem] = useState<string | null>(null);
   
   // Only show pickups and returns - no ongoing bookings
   const allBookings = [...pickups, ...returns];
@@ -68,6 +86,14 @@ export function BookingList({ pickups, returns, onBookingClick, maxVisible = 3 }
   const visibleBookings = showAll ? allBookings : allBookings.slice(0, maxVisible);
   const hasMore = totalCount > maxVisible;
   
+  const handleDragStart = (bookingId: string, type: string) => {
+    setDraggingItem(`${type}-${bookingId}`);
+  };
+  
+  const handleDragEnd = () => {
+    setDraggingItem(null);
+  };
+  
   return (
     <div className="space-y-2">
       {/* Show pickup bookings first */}
@@ -79,6 +105,9 @@ export function BookingList({ pickups, returns, onBookingClick, maxVisible = 3 }
             booking={booking}
             type="pickup"
             onClick={onBookingClick}
+            isDragging={draggingItem === `pickup-${booking.id}`}
+            onDragStart={() => handleDragStart(booking.id, 'pickup')}
+            onDragEnd={handleDragEnd}
           />
         ))
       }
@@ -92,6 +121,9 @@ export function BookingList({ pickups, returns, onBookingClick, maxVisible = 3 }
             booking={booking}
             type="return"
             onClick={onBookingClick}
+            isDragging={draggingItem === `return-${booking.id}`}
+            onDragStart={() => handleDragStart(booking.id, 'return')}
+            onDragEnd={handleDragEnd}
           />
         ))
       }

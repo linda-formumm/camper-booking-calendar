@@ -1,31 +1,21 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, CheckCircle } from "lucide-react";
 import { HeroBackground } from "@/components/HeroBackground";
-import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { BookingInfoPanel } from "@/components/BookingInfoPanel";
-import { bookingsApi, stationsApi } from "@/lib/api";
 import { useAppStore } from "@/store/appStore";
+import { useBookingStore } from "@/store/bookingStore";
 import * as dateUtils from "@/lib/date-utils";
 
 export default function BookingDetailPage() {
   const { bookingId } = useParams<{ stationId: string; bookingId: string }>();
   const navigate = useNavigate();
-  const { setWeekStart } = useAppStore();
+  const { setWeekStart, selectedStation } = useAppStore();
+  const { getBooking } = useBookingStore();
 
-  const { data: booking, isLoading, error } = useQuery({
-    queryKey: ["booking", bookingId],
-    queryFn: () => bookingsApi.getBooking(bookingId!),
-    enabled: !!bookingId,
-  });
-
-  const { data: station } = useQuery({
-    queryKey: ["station", booking?.pickupReturnStationId],
-    queryFn: () => stationsApi.getStation(booking!.pickupReturnStationId),
-    enabled: !!booking?.pickupReturnStationId,
-  });
+  // Get the booking from store (contains all current data including drag changes)
+  const booking = bookingId ? getBooking(bookingId) : undefined;
 
   const handleBack = () => {
     if (booking) {
@@ -36,7 +26,7 @@ export default function BookingDetailPage() {
     navigate("/calendar");
   };
 
-  // Gemeinsames Layout für alle States
+  // Layout wrapper
   const renderLayout = (content: React.ReactNode) => (
     <main className="min-h-screen relative">
       <HeroBackground 
@@ -79,26 +69,17 @@ export default function BookingDetailPage() {
     </main>
   );
 
-  // Loading State
-  if (isLoading) {
-    return renderLayout(<LoadingState />);
-  }
-
-  // Error State
-  if (error) {
-    return renderLayout(
-      <ErrorState title="Error Loading Booking" message="Sorry, we couldn't load the booking details. Please try again later." />
-    );
-  }
-
   // Not Found State
   if (!booking) {
     return renderLayout(
-      <ErrorState title="Booking Not Found" message="The booking you're looking for doesn't exist or has been removed." />
+      <ErrorState 
+        title="Booking Not Found" 
+        message="The booking you're looking for doesn't exist or has been removed." 
+      />
     );
   }
 
-  // Success State - Booking Details
+  // Success State - Show Booking Details
   const customerInfo = [
     { label: "Name", value: booking.customerName },
   ];
@@ -109,7 +90,7 @@ export default function BookingDetailPage() {
     { label: "Pickup Date", value: dateUtils.formatDateForDisplay(booking.startDate) },
     { label: "Return Date", value: dateUtils.formatDateForDisplay(booking.endDate) },
     { label: "Duration", value: `${duration} day${duration !== 1 ? 's' : ''}` },
-    { label: "Station", value: station?.name || booking.pickupReturnStationId },
+    { label: "Station", value: selectedStation?.name || booking.pickupReturnStationId },
   ];
 
   return renderLayout(

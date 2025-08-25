@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { stationsApi } from '../lib/api';
+import { stationsApi, bookingsApi } from '../lib/api';
 import { useAppStore } from '../store/appStore';
+import { useBookingStore } from '../store/bookingStore';
 import type { Station } from '../lib/types';
 
 export function StationPicker({ autoFocus = false }: { autoFocus?: boolean }) {
@@ -13,6 +14,7 @@ export function StationPicker({ autoFocus = false }: { autoFocus?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [stations, setStations] = useState<Station[]>([]);
   const { selectedStation, setSelectedStation } = useAppStore();
+  const { setBookings } = useBookingStore();
   const navigate = useNavigate();
 
   // Load stations once
@@ -37,10 +39,21 @@ export function StationPicker({ autoFocus = false }: { autoFocus?: boolean }) {
     setIsOpen(value.length > 0);
   };
 
-  const selectStation = (station: Station) => {
+  const selectStation = async (station: Station) => {
     setSelectedStation(station);
     setQuery('');
     setIsOpen(false);
+    
+    // Load all bookings for this station immediately
+    try {
+      console.log('Loading bookings for station:', station.name);
+      const bookings = await bookingsApi.getBookings({ stationId: station.id });
+      setBookings(bookings);
+      console.log('Loaded', bookings.length, 'bookings into store');
+    } catch (error) {
+      console.error('Failed to load bookings:', error);
+    }
+    
     navigate('/calendar');
   };
 
@@ -48,6 +61,10 @@ export function StationPicker({ autoFocus = false }: { autoFocus?: boolean }) {
     setSelectedStation(null);
     setQuery('');
     setIsOpen(false);
+    
+    // Clear bookings from store when no station selected
+    setBookings([]);
+    console.log('Cleared bookings from store');
   };
 
   return (
