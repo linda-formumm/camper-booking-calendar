@@ -6,17 +6,15 @@ export default function CalendarPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {selectedStation ? `${selectedStation.name} Booking Calendar` : 'Booking Calendar'}
-        </h1>
-        {selectedStation && (
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Manage bookings for {selectedStation.name} station
-          </p>
+     
+        {!selectedStation && (
+           <header>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Booking Calendar
+            </h1>
+          </header>
         )}
-      </header>
-
+      
       {/* Calendar Component */}
       {selectedStation ? (
         <Calendar />

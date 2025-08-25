@@ -83,7 +83,47 @@ export default function Calendar({ className }: CalendarProps) {
   }, [currentWeek]);
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn('relative', className)}>
+      {/* Hero Header Section */}
+      <section className="relative h-[280px] overflow-hidden mb-8 rounded-lg">
+        {/* Background Images */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat dark:hidden"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=2340&auto=format&fit=crop')`,
+          }}
+        />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2340&auto=format&fit=crop')`,
+          }}
+        />
+
+        {/* Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/30 via-gray-900/50 to-gray-900/70 dark:from-black/50 dark:via-black/60 dark:to-black/80" />
+
+        {/* Header Content */}
+        <div className="relative z-10 flex h-full items-center justify-center">
+          <div className="text-center">
+            <h1 className="mb-4 text-4xl font-black text-white drop-shadow-2xl md:text-5xl">
+              Booking Calendar
+            </h1>
+            
+            <div className="mb-4 flex items-center justify-center">
+              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+              <CalendarIcon size={20} className="mx-3 text-white" />
+              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+            </div>
+            
+            <p className="text-lg font-light text-white/90 drop-shadow-lg">
+              {selectedStation ? `Location: ${selectedStation.name}` : 'Fleet Management Dashboard'}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="space-y-6">
       {/* Navigation Header */}
       <div className="flex items-center justify-between">
         <div className="flex-1"></div>
@@ -269,6 +309,7 @@ export default function Calendar({ className }: CalendarProps) {
       {/* Keyboard Navigation Hint */}
       <div className="text-xs text-stone-500 dark:text-gray-500 text-center">
         Tip: Use ← → arrow keys for navigation
+      </div>
       </div>
     </div>
   );

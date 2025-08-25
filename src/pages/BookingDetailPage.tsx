@@ -69,105 +69,155 @@ export default function BookingDetailPage() {
   const duration = calculateBookingDuration(booking.startDate, booking.endDate);
 
   return (
-    <div className="space-y-6">
-      {/* Header with blue title and underline */}
-      <div className="text-center mb-4">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400">
-          Booking Details
-        </h1>
-        <div className="w-20 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-2 rounded-full"></div>
-      </div>
+    <div className="relative">
+      {/* Hero Header Section */}
+      <section className="relative h-[280px] overflow-hidden mb-8 rounded-lg">
+        {/* Background Images */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat dark:hidden"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=2340&auto=format&fit=crop')`,
+          }}
+        />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2340&auto=format&fit=crop')`,
+          }}
+        />
 
-      {/* Booking Details */}
-      <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-gray-700 dark:bg-gray-800">
-        <div className="grid gap-6 md:grid-cols-2">
-          
-          {/* Customer Information */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Customer Information
-            </h2>
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Customer Name
-                </label>
-                <p className="text-lg text-gray-900 dark:text-white">
-                  {booking.customerName}
-                </p>
+        {/* Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/30 via-gray-900/50 to-gray-900/70 dark:from-black/50 dark:via-black/60 dark:to-black/80" />
+
+        {/* Header Content */}
+        <div className="relative z-10 flex h-full items-center justify-center">
+          <div className="text-center">
+            <h1 className="mb-4 text-4xl font-black text-white drop-shadow-2xl md:text-5xl">
+              Booking Details
+            </h1>
+            
+            <div className="mb-4 flex items-center justify-center">
+              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+              <svg className="mx-3 w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+            </div>
+            
+            <p className="text-lg font-light text-white/90 drop-shadow-lg">
+              Location: {station?.name || 'Roadsurfer Station'} • Reservation Information
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="space-y-6">
+
+      {/* Booking Details - Desktop Grid Layout */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        
+        {/* Customer Information Panel */}
+        <div className="relative">
+          <div className="rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200/60 shadow-sm dark:bg-gray-800/70 dark:border-gray-600/40 overflow-hidden">
+            <div className="p-6">
+              <div className="mb-4">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                  Customer Information
+                </h2>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
+                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                    Customer Name
+                  </dt>
+                  <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    {booking.customerName}
+                  </dd>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Booking Information */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Booking Information
-            </h2>
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Booking Start Date
-                </label>
-                <p className="text-lg text-gray-900 dark:text-white">
-                  {new Date(booking.startDate).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
+        {/* Booking Information Panel */}
+        <div className="relative">
+          <div className="rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200/60 shadow-sm dark:bg-gray-800/70 dark:border-gray-600/40 overflow-hidden">
+            <div className="p-6">
+              <div className="mb-4">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                  Booking Information
+                </h2>
               </div>
               
-              <div>
-                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Booking End Date
-                </label>
-                <p className="text-lg text-gray-900 dark:text-white">
-                  {new Date(booking.endDate).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Booking Duration
-                </label>
-                <p className="text-lg text-gray-900 dark:text-white">
-                  {duration} {duration === 1 ? 'day' : 'days'}
-                </p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Pickup & Return Station
-                </label>
-                <p className="text-lg text-gray-900 dark:text-white">
-                  {station?.name || `Station ${stationId}`}
-                </p>
+              <div className="space-y-3">
+                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
+                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                    Pickup Date
+                  </dt>
+                  <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    {new Date(booking.startDate).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </dd>
+                </div>
+                
+                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
+                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                    Return Date
+                  </dt>
+                  <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    {new Date(booking.endDate).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </dd>
+                </div>
+                
+                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
+                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                    Duration
+                  </dt>
+                  <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    {duration} {duration === 1 ? 'day' : 'days'}
+                  </dd>
+                </div>
+                
+                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
+                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                    Station
+                  </dt>
+                  <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    {station?.name || `Station ${stationId}`}
+                  </dd>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Back to Calendar Button */}
-      <div className="flex">
+      {/* Back Link */}
+      <div className="flex justify-start">
         <button
           onClick={() => {
-            // Navigate back to calendar with the booking's date
             const bookingDate = new Date(booking.startDate);
             const dateParam = bookingDate.toISOString().split('T')[0];
             navigate(`/calendar?date=${dateParam}`);
           }}
-          className="rounded-lg bg-gray-100 px-4 py-3 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors cursor-pointer"
         >
-          ← Back to Calendar
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Calendar
         </button>
+      </div>
       </div>
     </div>
   );
