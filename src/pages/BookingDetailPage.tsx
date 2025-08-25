@@ -1,210 +1,121 @@
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import { CheckCircle, ChevronLeft } from "lucide-react";
-import { useBookingDetail } from "../hooks/use-booking-detail";
-import { useStations } from "../hooks/use-stations";
-import { calculateBookingDuration } from "../lib/date-utils";
-import { HeroBackground } from "../components/HeroBackground";
+import { ChevronLeft, CheckCircle } from "lucide-react";
+import { HeroBackground } from "@/components/HeroBackground";
+import { LoadingState } from "@/components/LoadingState";
+import { ErrorState } from "@/components/ErrorState";
+import { BookingInfoPanel } from "@/components/BookingInfoPanel";
+import { bookingsApi, stationsApi } from "@/lib/api";
+import { useAppStore } from "@/store/appStore";
+import * as dateUtils from "@/lib/date-utils";
 
 export default function BookingDetailPage() {
-  const { stationId, bookingId } = useParams<{ stationId: string; bookingId: string }>();
+  const { bookingId } = useParams<{ stationId: string; bookingId: string }>();
   const navigate = useNavigate();
-  
-  const { data: booking, isLoading: bookingLoading, error: bookingError } = useBookingDetail(stationId || null, bookingId || null);
-  const { data: stations } = useStations();
-  
-  const station = stations?.find(s => s.id === stationId);
+  const { setWeekStart } = useAppStore();
 
-  if (bookingLoading) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Booking Details
-          </h1>
-        </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-          <div className="animate-pulse">
-            <div className="h-4 bg-gray-300 rounded w-1/4 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-300 rounded w-1/2 mx-auto"></div>
-          </div>
-        </div>
-        <div className="flex">
-          <button
-            onClick={() => navigate("/calendar")}
-            className="rounded-lg bg-gray-100 px-4 py-3 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-          >
-            ← Back to Calendar
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const { data: booking, isLoading, error } = useQuery({
+    queryKey: ["booking", bookingId],
+    queryFn: () => bookingsApi.getBooking(bookingId!),
+    enabled: !!bookingId,
+  });
 
-  if (bookingError || !booking) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Booking Details
-          </h1>
-        </div>
-        <div className="rounded-xl border border-red-200 bg-red-50 p-12 text-center dark:border-red-800 dark:bg-red-900/20">
-          <p className="text-lg text-red-600 dark:text-red-400">
-            Booking not found
-          </p>
-          <p className="mt-2 text-sm text-red-500 dark:text-red-500">
-            The booking you're looking for doesn't exist or has been removed.
-          </p>
-        </div>
-        <div className="flex">
-          <button
-            onClick={() => navigate("/calendar")}
-            className="rounded-lg bg-gray-100 px-4 py-3 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-          >
-            ← Back to Calendar
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const { data: station } = useQuery({
+    queryKey: ["station", booking?.pickupReturnStationId],
+    queryFn: () => stationsApi.getStation(booking!.pickupReturnStationId),
+    enabled: !!booking?.pickupReturnStationId,
+  });
 
-  const duration = calculateBookingDuration(booking.startDate, booking.endDate);
+  const handleBack = () => {
+    if (booking) {
+      const bookingStartDate = new Date(booking.startDate);
+      const weekStart = dateUtils.getWeekStart(bookingStartDate);
+      setWeekStart(weekStart);
+    }
+    navigate("/calendar");
+  };
 
-  return (
-    <div className="relative">
-      {/* Hero Header Section */}
-            <HeroBackground
+  // Gemeinsames Layout für alle States
+  const renderLayout = (content: React.ReactNode) => (
+    <main className="min-h-screen relative">
+      <HeroBackground 
         lightImage="/images/van-roadtrip-light.jpg"
         darkImage="/images/van-mountains-dark.jpg"
-        preload={true}
-        desktopOnly={true}
       >
-        <div className="text-center">
-          <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-white lg:text-white lg:font-black lg:drop-shadow-2xl lg:mb-4">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-white lg:text-white">
             Booking Details
           </h1>
           
-          {/* Desktop decorative elements */}
-          <div className="hidden lg:block mb-4">
-            <div className="flex items-center justify-center">
-              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
-              <CheckCircle className="mx-3 w-5 h-5 text-white" />
-              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
-            </div>
+          <div className="hidden lg:flex items-center justify-center">
+            <hr className="w-16 h-px bg-white/50" />
+            <CheckCircle size={20} className="mx-3 text-white" />
+            <hr className="w-16 h-px bg-white/50" />
           </div>
-        
-          <p className="text-sm lg:text-lg font-normal lg:font-light text-gray-600 dark:text-gray-400 lg:text-white/90 lg:drop-shadow-lg">
-            Location: {station?.name || 'Roadsurfer Station'} • Booking ID {bookingId}
+          
+          <p className="text-sm lg:text-lg text-gray-600 dark:text-gray-400 lg:text-white/90">
+            {booking ? `Booking ID: ${booking.id}` : 'Loading booking information...'}
           </p>
         </div>
       </HeroBackground>
-
-      <div className="space-y-6">
-
-      {/* Booking Details - Desktop Grid Layout */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        
-        {/* Customer Information Panel */}
-        <div className="relative">
-          <div className="rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200/60 shadow-sm dark:bg-gray-800/70 dark:border-gray-600/40 overflow-hidden">
-            <div className="p-6">
-              <div className="mb-4">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                  Customer Information
-                </h2>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
-                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                    Customer Name
-                  </dt>
-                  <dd className="text-base font-medium text-gray-900 dark:text-white">
-                    {booking.customerName}
-                  </dd>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Booking Information Panel */}
-        <div className="relative">
-          <div className="rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200/60 shadow-sm dark:bg-gray-800/70 dark:border-gray-600/40 overflow-hidden">
-            <div className="p-6">
-              <div className="mb-4">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                  Booking Information
-                </h2>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
-                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                    Pickup Date
-                  </dt>
-                  <dd className="text-base font-medium text-gray-900 dark:text-white">
-                    {new Date(booking.startDate).toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </dd>
-                </div>
-                
-                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
-                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                    Return Date
-                  </dt>
-                  <dd className="text-base font-medium text-gray-900 dark:text-white">
-                    {new Date(booking.endDate).toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </dd>
-                </div>
-                
-                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
-                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                    Duration
-                  </dt>
-                  <dd className="text-base font-medium text-gray-900 dark:text-white">
-                    {duration} {duration === 1 ? 'day' : 'days'}
-                  </dd>
-                </div>
-                
-                <div className="p-3 rounded-lg bg-gray-50/80 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-600/30">
-                  <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                    Station
-                  </dt>
-                  <dd className="text-base font-medium text-gray-900 dark:text-white">
-                    {station?.name || `Station ${stationId}`}
-                  </dd>
-                </div>
-              </div>
-            </div>
-          </div>
+      
+      <div className="relative z-10 container mx-auto px-4 py-8">
+        <div className="mx-auto">
+          <nav className="mb-6" role="navigation" aria-label="Secondary navigation">
+            <button
+              onClick={handleBack}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors backdrop-blur-sm"
+              aria-label="Back to calendar"
+              type="button"
+            >
+              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+              <span>Back to Calendar</span>
+            </button>
+          </nav>
+          {content}
         </div>
       </div>
+    </main>
+  );
 
-      {/* Back Link */}
-      <div className="flex justify-start">
-        <button
-          onClick={() => {
-            const bookingDate = new Date(booking.startDate);
-            const dateParam = bookingDate.toISOString().split('T')[0];
-            navigate(`/calendar?date=${dateParam}`);
-          }}
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors cursor-pointer"
-        >
-          <ChevronLeft className="w-3 h-3" />
-          Back to Calendar
-        </button>
-      </div>
-      </div>
+  // Loading State
+  if (isLoading) {
+    return renderLayout(<LoadingState />);
+  }
+
+  // Error State
+  if (error) {
+    return renderLayout(
+      <ErrorState title="Error Loading Booking" message="Sorry, we couldn't load the booking details. Please try again later." />
+    );
+  }
+
+  // Not Found State
+  if (!booking) {
+    return renderLayout(
+      <ErrorState title="Booking Not Found" message="The booking you're looking for doesn't exist or has been removed." />
+    );
+  }
+
+  // Success State - Booking Details
+  const customerInfo = [
+    { label: "Name", value: booking.customerName },
+  ];
+
+  const duration = dateUtils.calculateBookingDuration(booking.startDate, booking.endDate);
+  
+  const bookingInfo = [
+    { label: "Pickup Date", value: dateUtils.formatDateForDisplay(booking.startDate) },
+    { label: "Return Date", value: dateUtils.formatDateForDisplay(booking.endDate) },
+    { label: "Duration", value: `${duration} day${duration !== 1 ? 's' : ''}` },
+    { label: "Station", value: station?.name || booking.pickupReturnStationId },
+  ];
+
+  return renderLayout(
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <BookingInfoPanel title="Customer Information" items={customerInfo} />
+      <BookingInfoPanel title="Booking Information" items={bookingInfo} />
     </div>
   );
 }
