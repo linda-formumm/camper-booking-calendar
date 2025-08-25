@@ -5,6 +5,7 @@ import { getWeekStart, getWeekDays, getISOWeek, isToday, formatDayHeader, format
 import { useWeeklyBookings } from '../hooks/use-weekly-bookings';
 import { useAppStore } from '../store/appStore';
 import { BookingList } from './BookingList';
+import { HeroBackground } from './HeroBackground';
 import { cn } from '../lib/utils';
 import type { Booking } from '../lib/types';
 
@@ -85,43 +86,29 @@ export default function Calendar({ className }: CalendarProps) {
   return (
     <div className={cn('relative', className)}>
       {/* Hero Header Section */}
-      <section className="relative h-[280px] overflow-hidden mb-8 rounded-lg">
-        {/* Background Images */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat dark:hidden"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=2340&auto=format&fit=crop')`,
-          }}
-        />
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2340&auto=format&fit=crop')`,
-          }}
-        />
-
-        {/* Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/30 via-gray-900/50 to-gray-900/70 dark:from-black/50 dark:via-black/60 dark:to-black/80" />
-
-        {/* Header Content */}
-        <div className="relative z-10 flex h-full items-center justify-center">
-          <div className="text-center">
-            <h1 className="mb-4 text-4xl font-black text-white drop-shadow-2xl md:text-5xl">
-              Booking Calendar
-            </h1>
-            
-            <div className="mb-4 flex items-center justify-center">
-              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
-              <CalendarIcon size={20} className="mx-3 text-white" />
-              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
-            </div>
-            
-            <p className="text-lg font-light text-white/90 drop-shadow-lg">
-              {selectedStation ? `Location: ${selectedStation.name}` : 'Fleet Management Dashboard'}
-            </p>
+      <HeroBackground
+        lightImage="/images/van-roadtrip-light.jpg"
+        darkImage="/images/van-mountains-dark.jpg"
+        lightImageMobile="/images/van-roadtrip-light-mobile.jpg"
+        darkImageMobile="/images/van-mountains-dark-mobile.jpg"
+        preload={true}
+      >
+        <div className="text-center">
+          <h1 className="mb-4 text-4xl font-black text-white drop-shadow-2xl md:text-5xl">
+            Booking Calendar
+          </h1>
+          
+          <div className="mb-4 flex items-center justify-center">
+            <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+            <CalendarIcon size={20} className="mx-3 text-white" />
+            <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
           </div>
+          
+          <p className="text-lg font-light text-white/90 drop-shadow-lg">
+            {selectedStation ? `Location: ${selectedStation.name}` : 'Fleet Management Dashboard'}
+          </p>
         </div>
-      </section>
+      </HeroBackground>
 
       <div className="space-y-6">
       {/* Navigation Header */}

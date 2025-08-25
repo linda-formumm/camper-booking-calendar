@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useBookingDetail } from "../hooks/use-booking-detail";
 import { useStations } from "../hooks/use-stations";
 import { calculateBookingDuration } from "../lib/date-utils";
+import { HeroBackground } from "../components/HeroBackground";
 
 export default function BookingDetailPage() {
   const { stationId, bookingId } = useParams<{ stationId: string; bookingId: string }>();
@@ -71,45 +72,31 @@ export default function BookingDetailPage() {
   return (
     <div className="relative">
       {/* Hero Header Section */}
-      <section className="relative h-[280px] overflow-hidden mb-8 rounded-lg">
-        {/* Background Images */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat dark:hidden"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=2340&auto=format&fit=crop')`,
-          }}
-        />
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden dark:block"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2340&auto=format&fit=crop')`,
-          }}
-        />
-
-        {/* Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/30 via-gray-900/50 to-gray-900/70 dark:from-black/50 dark:via-black/60 dark:to-black/80" />
-
-        {/* Header Content */}
-        <div className="relative z-10 flex h-full items-center justify-center">
-          <div className="text-center">
-            <h1 className="mb-4 text-4xl font-black text-white drop-shadow-2xl md:text-5xl">
-              Booking Details
-            </h1>
-            
-            <div className="mb-4 flex items-center justify-center">
-              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
-              <svg className="mx-3 w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
-            </div>
-            
-            <p className="text-lg font-light text-white/90 drop-shadow-lg">
-              Location: {station?.name || 'Roadsurfer Station'} • Reservation Information
-            </p>
+      <HeroBackground
+        lightImage="/images/van-roadtrip-light.jpg"
+        darkImage="/images/van-mountains-dark.jpg"
+        lightImageMobile="/images/van-roadtrip-light-mobile.jpg"
+        darkImageMobile="/images/van-mountains-dark-mobile.jpg"
+        preload={true}
+      >
+        <div className="text-center">
+          <h1 className="mb-4 text-4xl font-black text-white drop-shadow-2xl md:text-5xl">
+            Booking Details
+          </h1>
+          
+          <div className="mb-4 flex items-center justify-center">
+            <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+            <svg className="mx-3 w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
           </div>
+          
+          <p className="text-lg font-light text-white/90 drop-shadow-lg">
+            Location: {station?.name || 'Roadsurfer Station'} • Booking ID {bookingId}
+          </p>
         </div>
-      </section>
+      </HeroBackground>
 
       <div className="space-y-6">
 
