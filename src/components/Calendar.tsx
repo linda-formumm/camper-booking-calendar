@@ -89,30 +89,62 @@ export default function Calendar({ className }: CalendarProps) {
       <HeroBackground
         lightImage="/images/van-roadtrip-light.jpg"
         darkImage="/images/van-mountains-dark.jpg"
-        lightImageMobile="/images/van-roadtrip-light-mobile.jpg"
-        darkImageMobile="/images/van-mountains-dark-mobile.jpg"
         preload={true}
+        desktopOnly={true}
       >
-        <div className="text-center">
-          <h1 className="mb-4 text-4xl font-black text-white drop-shadow-2xl md:text-5xl">
+        <div className="text-center space-y-3 lg:space-y-4">
+          <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-white lg:text-white lg:font-black lg:drop-shadow-2xl">
             Booking Calendar
           </h1>
           
-          <div className="mb-4 flex items-center justify-center">
-            <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
-            <CalendarIcon size={20} className="mx-3 text-white" />
-            <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+          {/* Desktop decorative elements */}
+          <div className="hidden lg:block">
+            <div className="flex items-center justify-center mb-4">
+              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+              <CalendarIcon size={20} className="mx-3 text-white" />
+              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+            </div>
           </div>
           
-          <p className="text-lg font-light text-white/90 drop-shadow-lg">
+          <p className="text-sm lg:text-lg font-normal lg:font-light text-gray-600 dark:text-gray-400 lg:text-white/90 lg:drop-shadow-lg">
             {selectedStation ? `Location: ${selectedStation.name}` : 'Fleet Management Dashboard'}
           </p>
+
+          {/* Mobile Navigation - nur auf Mobile sichtbar */}
+          <div className="lg:hidden flex items-center justify-center space-x-4 pt-2">
+            <button
+              onClick={goToPreviousWeek}
+              disabled={bookingsLoading}
+              className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500"
+              aria-label="Previous week"
+            >
+              <ChevronLeft className="h-4 w-4 text-gray-700 dark:text-white" />
+            </button>
+            
+            <div className="text-center min-w-[140px]">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                {formatMonthYear(weekDays[0])}
+              </h2>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                Week {weekNumber}
+              </span>
+            </div>
+            
+            <button
+              onClick={goToNextWeek}
+              disabled={bookingsLoading}
+              className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500"
+              aria-label="Next week"
+            >
+              <ChevronRight className="h-4 w-4 text-gray-700 dark:text-white" />
+            </button>
+          </div>
         </div>
       </HeroBackground>
 
       <div className="space-y-6">
-      {/* Navigation Header */}
-      <div className="flex items-center justify-between">
+      {/* Desktop Navigation Header */}
+      <div className="hidden lg:flex items-center justify-between">
         <div className="flex-1"></div>
         
         <div className="flex items-center space-x-4">
@@ -165,7 +197,7 @@ export default function Calendar({ className }: CalendarProps) {
       </div>
 
       {/* Desktop Grid View */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <div className="grid grid-cols-7 gap-px bg-stone-300 dark:bg-gray-700 rounded-lg overflow-hidden shadow-sm">
           {/* Day Headers */}
           {weekDays.map((day, index) => (
@@ -231,10 +263,13 @@ export default function Calendar({ className }: CalendarProps) {
         </div>
       </div>
 
-      {/* Mobile Card View */}
-      <div className="md:hidden space-y-3">
+      {/* Mobile/Tablet Card View */}
+      <div className="lg:hidden space-y-3">
         {weekDays.map((day, index) => {
-          const dayString = day.toISOString().split('T')[0];
+          // Use same date formatting as desktop for consistency
+          const dayString = day.getFullYear() + '-' + 
+            String(day.getMonth() + 1).padStart(2, '0') + '-' + 
+            String(day.getDate()).padStart(2, '0');
           const dayData = weeklyData.find(d => d.date === dayString);
           
           return (

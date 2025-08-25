@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { CheckCircle, ChevronLeft } from "lucide-react";
 import { useBookingDetail } from "../hooks/use-booking-detail";
 import { useStations } from "../hooks/use-stations";
 import { calculateBookingDuration } from "../lib/date-utils";
@@ -72,27 +73,27 @@ export default function BookingDetailPage() {
   return (
     <div className="relative">
       {/* Hero Header Section */}
-      <HeroBackground
+            <HeroBackground
         lightImage="/images/van-roadtrip-light.jpg"
         darkImage="/images/van-mountains-dark.jpg"
-        lightImageMobile="/images/van-roadtrip-light-mobile.jpg"
-        darkImageMobile="/images/van-mountains-dark-mobile.jpg"
         preload={true}
+        desktopOnly={true}
       >
         <div className="text-center">
-          <h1 className="mb-4 text-4xl font-black text-white drop-shadow-2xl md:text-5xl">
+          <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-white lg:text-white lg:font-black lg:drop-shadow-2xl lg:mb-4">
             Booking Details
           </h1>
           
-          <div className="mb-4 flex items-center justify-center">
-            <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
-            <svg className="mx-3 w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+          {/* Desktop decorative elements */}
+          <div className="hidden lg:block mb-4">
+            <div className="flex items-center justify-center">
+              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+              <CheckCircle className="mx-3 w-5 h-5 text-white" />
+              <hr className="h-px w-16 bg-gradient-to-r from-transparent via-white to-transparent border-0" />
+            </div>
           </div>
-          
-          <p className="text-lg font-light text-white/90 drop-shadow-lg">
+        
+          <p className="text-sm lg:text-lg font-normal lg:font-light text-gray-600 dark:text-gray-400 lg:text-white/90 lg:drop-shadow-lg">
             Location: {station?.name || 'Roadsurfer Station'} • Booking ID {bookingId}
           </p>
         </div>
@@ -199,9 +200,7 @@ export default function BookingDetailPage() {
           }}
           className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors cursor-pointer"
         >
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ChevronLeft className="w-3 h-3" />
           Back to Calendar
         </button>
       </div>

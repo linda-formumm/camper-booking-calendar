@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 interface HeroBackgroundProps {
   lightImage: string;
   darkImage: string;
-  lightImageMobile?: string;
-  darkImageMobile?: string;
   preload?: boolean;
   className?: string;
   children?: React.ReactNode;
+  desktopOnly?: boolean; // If true, only show hero on desktop, mobile gets gradient
+  // Mobile images only needed when desktopOnly is false
+  lightImageMobile?: string;
+  darkImageMobile?: string;
 }
 
 export function HeroBackground({
@@ -17,25 +19,39 @@ export function HeroBackground({
   darkImageMobile,
   preload = false,
   className = '',
-  children
+  children,
+  desktopOnly = false
 }: HeroBackgroundProps) {
   const [lightLoaded, setLightLoaded] = useState(false);
   const [darkLoaded, setDarkLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Check if mobile
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    // Check if mobile/tablet - more sophisticated detection
+    const checkDevice = () => {
+      const width = window.innerWidth;
+      
+      // Consider desktop only if:
+      // 1. Width >= 1024px (large screens)
+      // 2. OR (width >= 768px AND it's likely a desktop based on user agent)
+      const isLikelyDesktop = width >= 1024 || 
+        (width >= 768 && !/Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent));
+      
+      setIsMobile(!isLikelyDesktop);
     };
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
     
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
   useEffect(() => {
+    // Skip loading images on mobile if desktopOnly is true
+    if (isMobile && desktopOnly) {
+      return;
+    }
+
     // Preload critical images
     if (preload) {
       const preloadImages = [
@@ -65,7 +81,24 @@ export function HeroBackground({
 
     loadImage(lightSrc, () => setLightLoaded(true));
     loadImage(darkSrc, () => setDarkLoaded(true));
-  }, [lightImage, darkImage, lightImageMobile, darkImageMobile, preload, isMobile]);
+  }, [lightImage, darkImage, lightImageMobile, darkImageMobile, preload, isMobile, desktopOnly]);
+
+  // Mobile with gradient background + simplified content
+  if (isMobile && desktopOnly) {
+    return (
+      <div className="relative mb-6 rounded-lg">
+        {/* Mobile Simple Background */}
+        <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800" />
+        
+        {/* Content with mobile-friendly styling */}
+        <div className="relative z-10 flex h-full items-center justify-center p-4">
+          <div className="text-center">
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // CSS Gradient Fallbacks
   const lightGradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
