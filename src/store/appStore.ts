@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Station } from "../lib/types";
 
-// Simple date utilities
+// Simple date utilities for week calculations
 const getWeekStart = (date: Date = new Date()): Date => {
   const d = new Date(date);
   const day = d.getDay();
@@ -17,15 +17,13 @@ interface AppState {
   // Theme
   isDarkMode: boolean;
 
-  // Calendar & Booking State
+  // Calendar & Station State
   selectedStationId: string | null;
   selectedStation: Station | null;
   weekStart: Date;
-  detailModalBookingId: string | null;
 
   // UI State
   isLoading: boolean;
-  searchQuery: string;
 }
 
 interface AppActions {
@@ -33,7 +31,7 @@ interface AppActions {
   toggleDarkMode: () => void;
   setDarkMode: (isDark: boolean) => void;
 
-  // Calendar actions
+  // Station & Calendar actions
   setSelectedStation: (station: Station | null) => void;
   setSelectedStationId: (stationId: string | null) => void;
   setWeekStart: (date: Date) => void;
@@ -41,12 +39,15 @@ interface AppActions {
   goToNextWeek: () => void;
   goToCurrentWeek: () => void;
 
-  // Modal actions
-  openBookingDetail: (bookingId: string) => void;
-  closeBookingDetail: () => void;
+  // UI actions
+  setLoading: (loading: boolean) => void;
 
-  // Search actions
-  setSearchQuery: (query: string) => void;
+  // URL sync helpers for deep linking
+  getStateForUrl: () => { station?: string; week?: string };
+  setStateFromUrl: (params: { station?: string; week?: string }) => void;
+}
+
+type AppStore = AppState & AppActions;
   clearSearch: () => void;
 
   // UI actions
@@ -65,15 +66,13 @@ export const useAppStore = create<AppStore>((set, get) => ({
   selectedStationId: null,
   selectedStation: null,
   weekStart: getWeekStart(),
-  detailModalBookingId: null,
   isLoading: false,
-  searchQuery: "",
 
   // Theme actions
   toggleDarkMode: () => set(state => ({ isDarkMode: !state.isDarkMode })),
   setDarkMode: isDark => set({ isDarkMode: isDark }),
 
-  // Calendar actions
+  // Station & Calendar actions
   setSelectedStation: station =>
     set({
       selectedStation: station,
@@ -99,18 +98,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   goToCurrentWeek: () => set({ weekStart: getWeekStart() }),
 
-  // Modal actions
-  openBookingDetail: bookingId => set({ detailModalBookingId: bookingId }),
-  closeBookingDetail: () => set({ detailModalBookingId: null }),
-
-  // Search actions
-  setSearchQuery: query => set({ searchQuery: query }),
-  clearSearch: () => set({ searchQuery: "" }),
-
   // UI actions
   setLoading: loading => set({ isLoading: loading }),
 
-  // URL sync helpers
+  // URL sync helpers for deep linking and navigation
   getStateForUrl: () => {
     const { selectedStationId, weekStart } = get();
     return {
@@ -142,9 +133,6 @@ export const useIsDarkMode = () => useAppStore(state => state.isDarkMode);
 export const useSelectedStationId = () =>
   useAppStore(state => state.selectedStationId);
 export const useWeekStart = () => useAppStore(state => state.weekStart);
-export const useDetailModalBookingId = () =>
-  useAppStore(state => state.detailModalBookingId);
-export const useSearchQuery = () => useAppStore(state => state.searchQuery);
 export const useIsLoading = () => useAppStore(state => state.isLoading);
 
 // Action hooks
@@ -158,16 +146,6 @@ export const useWeekNavigation = () =>
     goToNextWeek: state.goToNextWeek,
     goToCurrentWeek: state.goToCurrentWeek,
     setWeekStart: state.setWeekStart,
-  }));
-export const useBookingDetailModal = () =>
-  useAppStore(state => ({
-    openBookingDetail: state.openBookingDetail,
-    closeBookingDetail: state.closeBookingDetail,
-  }));
-export const useSearch = () =>
-  useAppStore(state => ({
-    setSearchQuery: state.setSearchQuery,
-    clearSearch: state.clearSearch,
   }));
 export const useUrlSync = () =>
   useAppStore(state => ({
