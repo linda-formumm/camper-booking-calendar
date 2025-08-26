@@ -33,21 +33,21 @@ export default function Calendar({ className }: CalendarProps) {
     }
   };
 
-  // drag and drop with state change
+  // Handle native HTML5 drag & drop for booking rescheduling
   const handleDrop = (e: React.DragEvent, newDate: string) => {
     e.preventDefault();
     const data = JSON.parse(e.dataTransfer.getData('text/plain'));
     
-    // Check if the date is actually changing
+    // Avoid unnecessary updates if date hasn't changed
     const originalBooking = data.originalBooking;
     const currentDate = data.type === 'pickup' ? originalBooking.startDate : originalBooking.endDate;
     
     if (currentDate === newDate) {
       console.log('No change - same date, skipping');
-      return; // Same date, do nothing
+      return;
     }
     
-    // Calculate pickup and return dates for validation
+    // Validate new booking date range before updating
     const newPickupDate = data.type === 'pickup' ? newDate : originalBooking.startDate;
     const newReturnDate = data.type === 'return' ? newDate : originalBooking.endDate;
     
@@ -63,7 +63,7 @@ export default function Calendar({ className }: CalendarProps) {
     const confirmed = confirm(`Change ${actionText} date to ${formattedDate}?`);
     
     if (confirmed) {
-      // Update booking in global store
+      // Optimistically update booking in store for immediate UI feedback
       const updatedBooking = {
         ...data.originalBooking,
         [data.type === 'pickup' ? 'startDate' : 'endDate']: newDate
@@ -73,9 +73,8 @@ export default function Calendar({ className }: CalendarProps) {
     }
   };
 
-  // Function to get bookings for a specific day from store
+  // Efficiently filter bookings by day from global store
   const getMergedBookings = (dayString: string) => {
-    // Get all bookings from store (loaded when station was selected)
     const allBookings = getAllBookings();
     
     // Filter bookings for this specific day

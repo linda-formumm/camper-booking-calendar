@@ -24,6 +24,7 @@ function BookingPill({ booking, type, onClick, isDragging, onDragStart, onDragEn
       draggable
       onDragStart={(e) => {
         onDragStart?.();
+        // Store all necessary data for drop validation and update
         e.dataTransfer.setData('text/plain', JSON.stringify({
           bookingId: booking.id,
           type: type,

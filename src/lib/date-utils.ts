@@ -57,6 +57,7 @@ export function isToday(date: Date): boolean {
 
 /**
  * Calculate the duration of a booking in days
+ * Returns rental days (not calendar days) - e.g., pickup Monday + return Tuesday = 1 day
  */
 export function calculateBookingDuration(startDate: string, endDate: string): number {
   const start = new Date(startDate);
@@ -119,6 +120,7 @@ export function formatDateForDayName(dateString: string): string {
 
 /**
  * Validate that return date is at least one day after pickup date
+ * Used during drag & drop to prevent invalid booking ranges
  */
 export function isValidBookingDateRange(pickupDate: string, returnDate: string): boolean {
   const pickupDateTime = new Date(pickupDate).getTime();

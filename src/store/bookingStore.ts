@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import type { Booking } from '../lib/types';
 
 interface BookingStore {
-  // All bookings (server data + local changes merged)
+  // Single source of truth for all booking data
   bookings: Booking[];
   
-  // Actions
+  // Store actions for managing booking state
   setBookings: (bookings: Booking[]) => void;
   updateBooking: (booking: Booking) => void;
   getBooking: (bookingId: string) => Booking | undefined;
@@ -15,13 +15,15 @@ interface BookingStore {
 export const useBookingStore = create<BookingStore>((set, get) => ({
   bookings: [],
   
+  // Load initial bookings from API (called when station is selected)
   setBookings: (bookings: Booking[]) => {
     set({ bookings });
   },
   
+  // Handle optimistic updates for drag & drop operations
   updateBooking: (updatedBooking: Booking) => {
     set((state) => {
-      // Replace existing booking or add new one
+      // Replace existing booking while preserving others
       const otherBookings = state.bookings.filter(b => b.id !== updatedBooking.id);
       
       console.log('Booking updated in store:', {

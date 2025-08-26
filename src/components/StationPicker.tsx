@@ -44,7 +44,7 @@ export function StationPicker({ autoFocus = false }: { autoFocus?: boolean }) {
     setQuery('');
     setIsOpen(false);
     
-    // Load all bookings for this station immediately
+    // Preload all station bookings for optimal calendar performance
     try {
       console.log('Loading bookings for station:', station.name);
       const bookings = await bookingsApi.getBookings({ stationId: station.id });
@@ -62,7 +62,7 @@ export function StationPicker({ autoFocus = false }: { autoFocus?: boolean }) {
     setQuery('');
     setIsOpen(false);
     
-    // Clear bookings from store when no station selected
+    // Clean up store state when switching stations
     setBookings([]);
     console.log('Cleared bookings from store');
   };
