@@ -7,7 +7,8 @@ import {
   formatDayHeader,
   formatMonthYear,
   formatDate,
-  calculateBookingDuration
+  calculateBookingDuration,
+  isValidBookingDateRange
 } from "./date-utils";
 
 describe("date-utils", () => {
@@ -207,10 +208,19 @@ describe("date-utils", () => {
   });
 
   describe("calculateBookingDuration", () => {
-    it("should calculate duration correctly for same-day booking", () => {
+    it("should calculate duration correctly for same-day pickup and return", () => {
       const pickup = "2021-03-10";
       const returnDate = "2021-03-10";
       
+      // Same day = 0 rental days (pickup and return on same day)
+      expect(calculateBookingDuration(pickup, returnDate)).toBe(0);
+    });
+
+    it("should calculate duration correctly for one rental day", () => {
+      const pickup = "2021-03-10"; // Monday pickup
+      const returnDate = "2021-03-11"; // Tuesday return
+      
+      // Monday pickup → Tuesday return = 1 rental day
       expect(calculateBookingDuration(pickup, returnDate)).toBe(1);
     });
 
@@ -218,42 +228,69 @@ describe("date-utils", () => {
       const pickup = "2021-03-10"; // March 10
       const returnDate = "2021-03-13"; // March 13
       
-      expect(calculateBookingDuration(pickup, returnDate)).toBe(4);
-    });
-
-    it("should calculate duration correctly for one-day booking", () => {
-      const pickup = "2021-03-10"; // March 10
-      const returnDate = "2021-03-11"; // March 11
-      
-      expect(calculateBookingDuration(pickup, returnDate)).toBe(2);
+      // 3 rental days (10→11, 11→12, 12→13)
+      expect(calculateBookingDuration(pickup, returnDate)).toBe(3);
     });
 
     it("should handle month boundaries correctly", () => {
       const pickup = "2021-03-30"; // March 30
       const returnDate = "2021-04-02"; // April 2
       
-      expect(calculateBookingDuration(pickup, returnDate)).toBe(4);
+      // 3 rental days (30→31, 31→01, 01→02)
+      expect(calculateBookingDuration(pickup, returnDate)).toBe(3);
     });
 
     it("should handle year boundaries correctly", () => {
       const pickup = "2021-12-30"; // December 30, 2021
       const returnDate = "2022-01-02"; // January 2, 2022
       
-      expect(calculateBookingDuration(pickup, returnDate)).toBe(4);
-    });
-
-    it("should handle single day correctly", () => {
-      const pickup = "2021-03-10";
-      const returnDate = "2021-03-10";
-      
-      expect(calculateBookingDuration(pickup, returnDate)).toBe(1);
+      // 3 rental days (30→31, 31→01, 01→02)
+      expect(calculateBookingDuration(pickup, returnDate)).toBe(3);
     });
 
     it("should handle longer durations correctly", () => {
       const pickup = "2021-03-01"; // March 1
       const returnDate = "2021-03-15"; // March 15
       
-      expect(calculateBookingDuration(pickup, returnDate)).toBe(15);
+      // 14 rental days
+      expect(calculateBookingDuration(pickup, returnDate)).toBe(14);
+    });
+  });
+
+  describe("isValidBookingDateRange", () => {
+    it("should return true for valid booking dates (return after pickup)", () => {
+      const pickup = "2021-03-10";
+      const returnDate = "2021-03-11";
+      
+      expect(isValidBookingDateRange(pickup, returnDate)).toBe(true);
+    });
+
+    it("should return false for same-day pickup and return", () => {
+      const pickup = "2021-03-10";
+      const returnDate = "2021-03-10";
+      
+      expect(isValidBookingDateRange(pickup, returnDate)).toBe(false);
+    });
+
+    it("should return false for return before pickup", () => {
+      const pickup = "2021-03-11";
+      const returnDate = "2021-03-10";
+      
+      expect(isValidBookingDateRange(pickup, returnDate)).toBe(false);
+    });
+
+    it("should handle month boundaries correctly", () => {
+      const pickup = "2021-03-31";
+      const returnDate = "2021-04-01";
+      
+      expect(isValidBookingDateRange(pickup, returnDate)).toBe(true);
+    });
+
+    it("should handle year boundaries correctly", () => {
+      const pickup = "2021-12-31";
+      const returnDate = "2022-01-01";
+      
+      expect(isValidBookingDateRange(pickup, returnDate)).toBe(true);
     });
   });
 
