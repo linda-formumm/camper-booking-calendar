@@ -1,17 +1,6 @@
 import { create } from "zustand";
 import type { Station } from "../lib/types";
-
-// Simple date utilities for week calculations
-const getWeekStart = (date: Date = new Date()): Date => {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff));
-};
-
-const formatDate = (date: Date): string => {
-  return date.toISOString().split("T")[0];
-};
+import { getWeekStart, formatDateForUrl } from "../lib/date-utils";
 
 interface AppState {
   // Theme
@@ -48,24 +37,13 @@ interface AppActions {
 }
 
 type AppStore = AppState & AppActions;
-  clearSearch: () => void;
-
-  // UI actions
-  setLoading: (loading: boolean) => void;
-
-  // URL sync helpers
-  getStateForUrl: () => { station?: string; week?: string };
-  setStateFromUrl: (params: { station?: string; week?: string }) => void;
-}
-
-type AppStore = AppState & AppActions;
 
 export const useAppStore = create<AppStore>((set, get) => ({
   // Initial state
   isDarkMode: false,
   selectedStationId: null,
   selectedStation: null,
-  weekStart: getWeekStart(),
+  weekStart: getWeekStart(new Date()),
   isLoading: false,
 
   // Theme actions
@@ -96,7 +74,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ weekStart: nextWeek });
   },
 
-  goToCurrentWeek: () => set({ weekStart: getWeekStart() }),
+  goToCurrentWeek: () => set({ weekStart: getWeekStart(new Date()) }),
 
   // UI actions
   setLoading: loading => set({ isLoading: loading }),
@@ -106,7 +84,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const { selectedStationId, weekStart } = get();
     return {
       station: selectedStationId || undefined,
-      week: formatDate(weekStart),
+      week: formatDateForUrl(weekStart),
     };
   },
 

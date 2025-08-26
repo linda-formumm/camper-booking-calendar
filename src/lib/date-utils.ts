@@ -129,3 +129,10 @@ export function isValidBookingDateRange(pickupDate: string, returnDate: string):
   
   return returnDateTime >= pickupDateTime + oneDayInMs;
 }
+
+/**
+ * Format date as ISO string (YYYY-MM-DD) for URL parameters
+ */
+export function formatDateForUrl(date: Date): string {
+  return date.toISOString().split("T")[0];
+}

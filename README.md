@@ -21,7 +21,7 @@ This project was built as an interview coding challenge to demonstrate modern Re
 ### Technical Implementation
 - Built with React 19, TypeScript, and Vite for modern development
 - Uses Zustand for predictable state management
-- Includes 36 comprehensive unit tests
+- Includes 39 comprehensive unit tests
 - Automated CI/CD pipeline with GitHub Actions
 - Code quality enforced with ESLint, Prettier, and pre-commit hooks
 
@@ -89,9 +89,9 @@ The application uses a dual-store architecture with Zustand:
 
 ## Testing Strategy
 
-The project includes 36 comprehensive unit tests covering critical functionality:
+The project includes 39 comprehensive unit tests covering critical functionality:
 
-### Date Utilities (28 tests)
+### Date Utilities (31 tests)
 These tests cover the core business logic:
 - Duration calculation with correct rental day counting
 - Week navigation and ISO week number calculations
@@ -136,7 +136,7 @@ This approach provides several benefits:
 The project uses GitHub Actions for automated deployment:
 
 1. **Install Dependencies** - Fresh install using npm ci
-2. **Run Tests** - All 36 tests must pass before proceeding
+2. **Run Tests** - All 39 tests must pass before proceeding
 3. **Build Application** - Creates optimized production build
 4. **Deploy to GitHub Pages** - Automatic deployment on main branch updates
 
@@ -155,7 +155,7 @@ During development, several technical challenges were solved:
 The project demonstrates several best practices:
 
 - **TypeScript Integration**: Strict type checking prevents common runtime errors
-- **Comprehensive Testing**: 36 unit tests ensure business logic correctness
+- **Comprehensive Testing**: 39 unit tests ensure business logic correctness
 - **Component Design**: Reusable components following single-responsibility principle
 - **Predictable State**: Clear state management patterns using Zustand
 - **Error Handling**: Graceful handling of edge cases and potential API failures

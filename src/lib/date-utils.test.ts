@@ -7,6 +7,7 @@ import {
   formatDayHeader,
   formatMonthYear,
   formatDate,
+  formatDateForUrl,
   calculateBookingDuration,
   isValidBookingDateRange
 } from "./date-utils";
@@ -204,6 +205,35 @@ describe("date-utils", () => {
       expect(formatDate(mar10)).toBe("Wed, Mar 10");
       expect(formatDate(jan1)).toBe("Fri, Jan 1");
       expect(formatDate(dec31)).toBe("Fri, Dec 31");
+    });
+  });
+
+  describe("formatDateForUrl", () => {
+    it("should format date as ISO string (YYYY-MM-DD) for URL parameters", () => {
+      const mar10 = new Date(2021, 2, 10); // March 10, 2021
+      const jan1 = new Date(2021, 0, 1); // January 1, 2021
+      const dec31 = new Date(2021, 11, 31); // December 31, 2021
+      
+      // Note: toISOString() converts to UTC, so we test the actual output
+      expect(formatDateForUrl(mar10)).toBe(mar10.toISOString().split('T')[0]);
+      expect(formatDateForUrl(jan1)).toBe(jan1.toISOString().split('T')[0]);
+      expect(formatDateForUrl(dec31)).toBe(dec31.toISOString().split('T')[0]);
+    });
+
+    it("should handle date across different months and years", () => {
+      const feb28 = new Date(2020, 1, 28); // February 28, 2020 (leap year)
+      const feb29 = new Date(2020, 1, 29); // February 29, 2020 (leap day)
+      const newYear = new Date(2023, 0, 1); // January 1, 2023
+      
+      expect(formatDateForUrl(feb28)).toBe(feb28.toISOString().split('T')[0]);
+      expect(formatDateForUrl(feb29)).toBe(feb29.toISOString().split('T')[0]);
+      expect(formatDateForUrl(newYear)).toBe(newYear.toISOString().split('T')[0]);
+    });
+
+    it("should format UTC dates correctly", () => {
+      // Test with explicit UTC dates to avoid timezone issues
+      const utcDate = new Date('2021-03-10T12:00:00.000Z');
+      expect(formatDateForUrl(utcDate)).toBe('2021-03-10');
     });
   });
 
