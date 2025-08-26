@@ -6,6 +6,7 @@ import { ErrorState } from "@/components/ErrorState";
 import { BookingInfoPanel } from "@/components/BookingInfoPanel";
 import { useAppStore } from "@/store/appStore";
 import { useBookingStore } from "@/store/bookingStore";
+import { getImagePath } from "@/lib/image-utils";
 import * as dateUtils from "@/lib/date-utils";
 
 export default function BookingDetailPage() {
@@ -30,8 +31,8 @@ export default function BookingDetailPage() {
   const renderLayout = (content: React.ReactNode) => (
     <main className="min-h-screen relative">
       <HeroBackground 
-        lightImage="/images/van-roadtrip-light.jpg"
-        darkImage="/images/van-mountains-dark.jpg"
+        lightImage={getImagePath("/images/van-roadtrip-light.jpg")}
+        darkImage={getImagePath("/images/van-mountains-dark.jpg")}
       >
         <div className="text-center space-y-4">
           <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-white lg:text-white">

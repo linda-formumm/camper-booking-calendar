@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Calendar as CalendarIcon } from 'lucide-react';
 import { getWeekDays } from '../lib/date-utils';
 import { useAppStore } from '../store/appStore';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { HeroBackground } from './HeroBackground';
+import { getImagePath } from '../lib/image-utils';
 import { cn } from '../lib/utils';
 import type { Booking } from '../lib/types';
 
@@ -60,13 +62,21 @@ export default function Calendar({ className }: CalendarProps) {
   return (
     <div className={cn('relative', className)}>
       <HeroBackground
-        lightImage="/images/van-roadtrip-light.jpg"
-        darkImage="/images/van-mountains-dark.jpg"
+        lightImage={getImagePath("/images/van-roadtrip-light.jpg")}
+        darkImage={getImagePath("/images/van-mountains-dark.jpg")}
       >
         <div className="text-center space-y-4">
           <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-white lg:text-white">
             Booking Calendar
           </h1>
+          
+          {selectedStation && (
+            <div className="hidden lg:flex items-center justify-center">
+              <hr className="w-16 h-px bg-white/50" />
+              <CalendarIcon size={20} className="mx-3 text-white" />
+              <hr className="w-16 h-px bg-white/50" />
+            </div>
+          )}
           
           <p className="text-sm lg:text-lg text-gray-600 dark:text-gray-400 lg:text-white/90">
             {selectedStation ? `Location: ${selectedStation.name}` : 'Fleet Management Dashboard'}
