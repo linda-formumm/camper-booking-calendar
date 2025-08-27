@@ -59,7 +59,7 @@ export function CalendarGrid({ weekDays, onBookingClick }: CalendarGridProps) {
 
   // Efficiently filter bookings by day using pre-loaded data
   const getMergedBookings = (dayString: string) => {
-    // Extract just the date part (YYYY-MM-DD) from booking dates for comparison
+    
     const pickups = allBookings.filter(booking => {
       const bookingDate = booking.startDate.split('T')[0]; // Extract date part
       return bookingDate === dayString;
