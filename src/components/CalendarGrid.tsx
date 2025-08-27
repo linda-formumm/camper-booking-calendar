@@ -15,6 +15,9 @@ export function CalendarGrid({ weekDays, onBookingClick }: CalendarGridProps) {
   const { updateBooking, getAllBookings } = useBookingStore();
   const [dragOverTarget, setDragOverTarget] = useState<string | null>(null);
 
+  // Load all bookings once per render instead of per day
+  const allBookings = getAllBookings();
+
   // Handle native HTML5 drag & drop for booking rescheduling
   const handleDrop = (e: React.DragEvent, newDate: string) => {
     e.preventDefault();
@@ -54,11 +57,19 @@ export function CalendarGrid({ weekDays, onBookingClick }: CalendarGridProps) {
     }
   };
 
-  // Efficiently filter bookings by day from global store
+  // Efficiently filter bookings by day using pre-loaded data
   const getMergedBookings = (dayString: string) => {
-    const allBookings = getAllBookings();
-    const pickups = allBookings.filter(booking => booking.startDate === dayString);
-    const returns = allBookings.filter(booking => booking.endDate === dayString);
+    // Extract just the date part (YYYY-MM-DD) from booking dates for comparison
+    const pickups = allBookings.filter(booking => {
+      const bookingDate = booking.startDate.split('T')[0]; // Extract date part
+      return bookingDate === dayString;
+    });
+    
+    const returns = allBookings.filter(booking => {
+      const bookingDate = booking.endDate.split('T')[0]; // Extract date part
+      return bookingDate === dayString;
+    });
+    
     return { pickups, returns };
   };
 
@@ -80,7 +91,7 @@ export function CalendarGrid({ weekDays, onBookingClick }: CalendarGridProps) {
       {weekDays.map((day, index) => {
         const dayString = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
         const { pickups, returns } = getMergedBookings(dayString);
-        
+
         return (
           <div 
             key={`day-${index}`} 

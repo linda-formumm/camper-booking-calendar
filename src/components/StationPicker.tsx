@@ -50,6 +50,7 @@ export function StationPicker({ autoFocus = false }: { autoFocus?: boolean }) {
       const bookings = await bookingsApi.getBookings({ stationId: station.id });
       setBookings(bookings);
       console.log('Loaded', bookings.length, 'bookings into store');
+      console.log(bookings);
     } catch (error) {
       console.error('Failed to load bookings:', error);
     }
